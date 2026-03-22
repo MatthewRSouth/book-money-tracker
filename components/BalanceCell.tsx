@@ -1,15 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { formatYen } from '@/lib/utils/formatYen';
 
 interface BalanceCellProps {
   balance: number;
   flash: 'up' | 'down' | null;
-}
-
-function formatYen(amount: number): string {
-  const abs = Math.abs(amount).toLocaleString('ja-JP');
-  return amount < 0 ? `-¥${abs}` : `¥${abs}`;
 }
 
 export default function BalanceCell({ balance, flash }: BalanceCellProps) {

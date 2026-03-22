@@ -1,11 +1,9 @@
+import { formatYen } from '@/lib/utils/formatYen';
+
 interface SummaryBarProps {
   studentCount: number;
   totalBalance: number;
   fullyPaidOut: number;
-}
-
-function formatYen(amount: number): string {
-  return `¥${Math.abs(amount).toLocaleString('ja-JP')}`;
 }
 
 export default function SummaryBar({
@@ -22,7 +20,7 @@ export default function SummaryBar({
       <div>
         <p className="text-xs text-zinc-400 uppercase tracking-wide">Total balance</p>
         <p className={`text-2xl font-semibold mt-0.5 ${totalBalance < 0 ? 'text-red-400' : 'text-zinc-100'}`}>
-          {totalBalance < 0 ? `-${formatYen(totalBalance)}` : formatYen(totalBalance)}
+          {formatYen(totalBalance)}
         </p>
       </div>
       <div>

@@ -18,3 +18,33 @@ export async function addStudent(
   revalidatePath('/dashboard');
   return { error: null };
 }
+
+export async function updateStudent(
+  studentId: string,
+  name: string,
+  balanceYen: number,
+  notes: string | null
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('update_student', {
+    p_student_id: studentId,
+    p_name: name,
+    p_balance_yen: balanceYen,
+    p_notes: notes,
+  });
+  if (error) return { error: error.message };
+  revalidatePath('/dashboard');
+  return { error: null };
+}
+
+export async function deleteStudent(
+  studentId: string
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('delete_student', {
+    p_student_id: studentId,
+  });
+  if (error) return { error: error.message };
+  revalidatePath('/dashboard');
+  return { error: null };
+}

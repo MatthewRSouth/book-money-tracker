@@ -17,8 +17,18 @@ export interface Student {
   class_group_id: string;
   name: string;
   balance_yen: number;
+  notes: string | null;
 }
 
 export interface StudentRow extends Student {
   received_book_ids: Set<string>;
+}
+
+export interface Payment {
+  id: string;
+  student_id: string;
+  amount_yen: number;
+  note: string | null;
+  paid_at: string;
+  created_at: string;
 }

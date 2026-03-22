@@ -1,13 +1,20 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Book, StudentRow } from '@/types';
 import BookCheckbox from './BookCheckbox';
 import BalanceCell from './BalanceCell';
 import AddStudentModal from './AddStudentModal';
 import AddBookModal from './AddBookModal';
+import EditStudentModal from './EditStudentModal';
+import EditBookModal from './EditBookModal';
+import RecordPaymentModal from './RecordPaymentModal';
+import DropdownMenu from './ui/DropdownMenu';
+import ConfirmDialog from './ui/ConfirmDialog';
 import { toggleBook } from '@/lib/actions/toggle';
+import { deleteStudent } from '@/lib/actions/students';
+import { deleteBook } from '@/lib/actions/books';
 
 interface StudentTableProps {
   books: Book[];
@@ -34,7 +41,18 @@ export default function StudentTable({
   const [showAddBook, setShowAddBook] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Sync when server re-renders with fresh data (e.g., after adding a student/book)
+  // Student edit/delete/payment state
+  const [editingStudent, setEditingStudent] = useState<StudentRow | null>(null);
+  const [deletingStudent, setDeletingStudent] = useState<StudentRow | null>(null);
+  const [payingStudent, setPayingStudent] = useState<StudentRow | null>(null);
+  const [deleteStudentLoading, setDeleteStudentLoading] = useState(false);
+
+  // Book edit/delete state
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [deletingBook, setDeletingBook] = useState<Book | null>(null);
+  const [deleteBookLoading, setDeleteBookLoading] = useState(false);
+
+  // Sync when server re-renders with fresh data
   useEffect(() => {
     setLocalStudents(initialStudents);
   }, [initialStudents]);
@@ -43,10 +61,8 @@ export default function StudentTable({
     const receiving = !currentlyChecked;
     const pendingKey = `${studentId}:${bookId}`;
 
-    // Prevent double-clicks
     if (pending.has(pendingKey)) return;
 
-    // Optimistic update
     setPending((p) => new Set(p).add(pendingKey));
     setLocalStudents((prev) =>
       prev.map((s) => {
@@ -70,7 +86,6 @@ export default function StudentTable({
     const { error } = await toggleBook(studentId, bookId, receiving);
 
     if (error) {
-      // Revert
       setLocalStudents(initialStudents);
       setErrorMsg('Failed to update. Please try again.');
       setTimeout(() => setErrorMsg(''), 4000);
@@ -83,14 +98,34 @@ export default function StudentTable({
     });
   }
 
-  function handleStudentAdded() {
-    setShowAddStudent(false);
+  function refresh() {
     startTransition(() => router.refresh());
   }
 
-  function handleBookAdded() {
-    setShowAddBook(false);
-    startTransition(() => router.refresh());
+  async function handleDeleteStudent() {
+    if (!deletingStudent) return;
+    setDeleteStudentLoading(true);
+    const { error } = await deleteStudent(deletingStudent.id);
+    setDeleteStudentLoading(false);
+    if (error) {
+      setErrorMsg('Failed to delete student. Please try again.');
+      setTimeout(() => setErrorMsg(''), 4000);
+    }
+    setDeletingStudent(null);
+    refresh();
+  }
+
+  async function handleDeleteBook() {
+    if (!deletingBook) return;
+    setDeleteBookLoading(true);
+    const { error } = await deleteBook(deletingBook.id);
+    setDeleteBookLoading(false);
+    if (error) {
+      setErrorMsg('Failed to delete book. Please try again.');
+      setTimeout(() => setErrorMsg(''), 4000);
+    }
+    setDeletingBook(null);
+    refresh();
   }
 
   return (
@@ -139,11 +174,21 @@ export default function StudentTable({
                   {books.map((book) => (
                     <th
                       key={book.id}
-                      className="px-4 py-3 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide whitespace-nowrap"
+                      className="px-4 py-3 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide whitespace-nowrap relative"
                     >
-                      <div>{book.title}</div>
-                      <div className="text-zinc-500 normal-case font-normal">
-                        ¥{book.price_yen.toLocaleString('ja-JP')}
+                      <div className="flex flex-col items-center gap-0.5">
+                        <div className="flex items-center gap-1">
+                          <span>{book.title}</span>
+                          <DropdownMenu
+                            items={[
+                              { label: 'Edit book', onClick: () => setEditingBook(book) },
+                              { label: 'Delete book', onClick: () => setDeletingBook(book), destructive: true },
+                            ]}
+                          />
+                        </div>
+                        <div className="text-zinc-500 normal-case font-normal">
+                          ¥{book.price_yen.toLocaleString('ja-JP')}
+                        </div>
                       </div>
                     </th>
                   ))}
@@ -151,29 +196,47 @@ export default function StudentTable({
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {localStudents.map((student) => (
-                  <tr key={student.id} className="hover:bg-zinc-800/30 transition-colors">
-                    <td className="px-4 py-3 font-medium text-zinc-100 whitespace-nowrap">
-                      {student.name}
-                    </td>
-                    <BalanceCell
-                      balance={student.balance_yen}
-                      flash={flashState[student.id] ?? null}
-                    />
-                    {books.map((book) => {
-                      const checked = student.received_book_ids.has(book.id);
-                      const pendingKey = `${student.id}:${book.id}`;
-                      return (
-                        <BookCheckbox
-                          key={book.id}
-                          checked={checked}
-                          disabled={pending.has(pendingKey)}
-                          onToggle={() =>
-                            handleToggle(student.id, book.id, book.price_yen, checked)
-                          }
-                        />
-                      );
-                    })}
-                  </tr>
+                  <React.Fragment key={student.id}>
+                    <tr className="hover:bg-zinc-800/30 transition-colors">
+                      <td className="px-4 py-3 font-medium text-zinc-100 whitespace-nowrap">
+                        <div className="flex items-center justify-between gap-2">
+                          <span>{student.name}</span>
+                          <DropdownMenu
+                            items={[
+                              { label: 'Edit student', onClick: () => setEditingStudent(student) },
+                              { label: 'Record payment', onClick: () => setPayingStudent(student) },
+                              { label: 'Delete', onClick: () => setDeletingStudent(student), destructive: true },
+                            ]}
+                          />
+                        </div>
+                      </td>
+                      <BalanceCell
+                        balance={student.balance_yen}
+                        flash={flashState[student.id] ?? null}
+                      />
+                      {books.map((book) => {
+                        const checked = student.received_book_ids.has(book.id);
+                        const pendingKey = `${student.id}:${book.id}`;
+                        return (
+                          <BookCheckbox
+                            key={book.id}
+                            checked={checked}
+                            disabled={pending.has(pendingKey)}
+                            onToggle={() =>
+                              handleToggle(student.id, book.id, book.price_yen, checked)
+                            }
+                          />
+                        );
+                      })}
+                    </tr>
+                    {student.notes && (
+                      <tr>
+                        <td colSpan={2 + books.length} className="px-4 pb-2 text-xs text-zinc-500 italic">
+                          {student.notes}
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
@@ -185,13 +248,60 @@ export default function StudentTable({
         isOpen={showAddStudent}
         onClose={() => setShowAddStudent(false)}
         classGroupId={classGroupId}
-        onSuccess={handleStudentAdded}
+        onSuccess={() => { setShowAddStudent(false); refresh(); }}
       />
       <AddBookModal
         isOpen={showAddBook}
         onClose={() => setShowAddBook(false)}
         classGroupId={classGroupId}
-        onSuccess={handleBookAdded}
+        onSuccess={() => { setShowAddBook(false); refresh(); }}
+      />
+
+      {editingStudent && (
+        <EditStudentModal
+          isOpen={true}
+          onClose={() => setEditingStudent(null)}
+          student={editingStudent}
+          onSuccess={() => { setEditingStudent(null); refresh(); }}
+        />
+      )}
+
+      {payingStudent && (
+        <RecordPaymentModal
+          isOpen={true}
+          onClose={() => setPayingStudent(null)}
+          student={payingStudent}
+          onSuccess={() => { setPayingStudent(null); refresh(); }}
+        />
+      )}
+
+      <ConfirmDialog
+        isOpen={!!deletingStudent}
+        onClose={() => setDeletingStudent(null)}
+        title="Delete student"
+        message={`Are you sure you want to delete ${deletingStudent?.name ?? 'this student'}? This cannot be undone.`}
+        confirmLabel="Delete student"
+        onConfirm={handleDeleteStudent}
+        loading={deleteStudentLoading}
+      />
+
+      {editingBook && (
+        <EditBookModal
+          isOpen={true}
+          onClose={() => setEditingBook(null)}
+          book={editingBook}
+          onSuccess={() => { setEditingBook(null); refresh(); }}
+        />
+      )}
+
+      <ConfirmDialog
+        isOpen={!!deletingBook}
+        onClose={() => setDeletingBook(null)}
+        title="Delete book"
+        message={`Are you sure you want to delete "${deletingBook?.title ?? 'this book'}"? Student balances will be restored.`}
+        confirmLabel="Delete book"
+        onConfirm={handleDeleteBook}
+        loading={deleteBookLoading}
       />
     </>
   );

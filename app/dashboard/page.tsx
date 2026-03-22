@@ -49,7 +49,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       .order('sort_order'),
     supabase
       .from('students')
-      .select('id, class_group_id, name, balance_yen')
+      .select('id, class_group_id, name, balance_yen, notes')
       .eq('class_group_id', activeGroup.id)
       .order('created_at'),
   ]);

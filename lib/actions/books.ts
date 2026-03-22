@@ -27,3 +27,31 @@ export async function addBook(
   revalidatePath('/dashboard');
   return { error: null };
 }
+
+export async function updateBook(
+  bookId: string,
+  title: string,
+  priceYen: number
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('update_book', {
+    p_book_id: bookId,
+    p_title: title,
+    p_price_yen: priceYen,
+  });
+  if (error) return { error: error.message };
+  revalidatePath('/dashboard');
+  return { error: null };
+}
+
+export async function deleteBook(
+  bookId: string
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('delete_book_restore_balances', {
+    p_book_id: bookId,
+  });
+  if (error) return { error: error.message };
+  revalidatePath('/dashboard');
+  return { error: null };
+}

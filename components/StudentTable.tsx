@@ -26,6 +26,7 @@ interface StudentTableProps {
   classGroupId: string;
   classGroupName: string;
   highlightStudentId?: string;
+  onStudentsChange: (students: StudentRow[]) => void;
 }
 
 type FlashState = Record<string, 'up' | 'down' | null>;
@@ -36,11 +37,22 @@ export default function StudentTable({
   classGroupId,
   classGroupName,
   highlightStudentId,
+  onStudentsChange,
 }: StudentTableProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
   const [localStudents, setLocalStudents] = useState<StudentRow[]>(initialStudents);
+
+  // Keep a ref to the latest callback so the effect below never goes stale.
+  const onStudentsChangeRef = useRef(onStudentsChange);
+  useEffect(() => { onStudentsChangeRef.current = onStudentsChange; });
+
+  // Notify parent whenever local optimistic state changes so the summary bar
+  // reflects toggles immediately.
+  useEffect(() => {
+    onStudentsChangeRef.current(localStudents);
+  }, [localStudents]);
   const [flashState, setFlashState] = useState<FlashState>({});
   const [highlightedId, setHighlightedId] = useState<string | undefined>(highlightStudentId);
   const [pending, setPending] = useState<Set<string>>(new Set());

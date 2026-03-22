@@ -72,7 +72,7 @@ export default function DropdownMenu({ items, trigger }: DropdownMenuProps) {
   }
 
   return (
-    <div ref={containerRef} className="relative inline-block" onKeyDown={handleKeyDown}>
+    <div ref={containerRef} className="relative inline-flex items-center" onKeyDown={handleKeyDown}>
       <button
         ref={buttonRef}
         type="button"

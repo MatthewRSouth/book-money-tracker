@@ -229,7 +229,7 @@ export default function StudentTable({
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         {/* Table header row with group name + buttons */}
         <div className="flex items-center gap-3 px-4 py-2 border-b border-border">
-          <span className="text-sm font-medium text-foreground shrink-0 mr-auto">{classGroupName}</span>
+          <span className="text-sm font-medium text-foreground min-w-0 truncate mr-auto">{classGroupName}</span>
           <div className="flex gap-1.5 overflow-x-auto scrollbar-hide shrink-0">
             <DropdownMenu
               trigger={<span className="hidden sm:flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors cursor-pointer whitespace-nowrap">Export ▾</span>}

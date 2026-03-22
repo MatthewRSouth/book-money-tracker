@@ -220,7 +220,7 @@ export default function StudentTable({
           <span className="text-sm font-medium text-foreground shrink-0 mr-auto">{classGroupName}</span>
           <div className="flex gap-1.5 overflow-x-auto scrollbar-hide shrink-0">
             <DropdownMenu
-              trigger={<span className="flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors cursor-pointer whitespace-nowrap">Export ▾</span>}
+              trigger={<span className="hidden sm:flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors cursor-pointer whitespace-nowrap">Export ▾</span>}
               items={[
                 { label: 'CSV', onClick: handleExportCSV },
                 { label: 'Excel (.xlsx)', onClick: handleExportXLSX },
@@ -228,7 +228,7 @@ export default function StudentTable({
             />
             <button
               onClick={() => setShowImport(true)}
-              className="flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors whitespace-nowrap"
+              className="hidden sm:flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors whitespace-nowrap"
             >
               Import
             </button>

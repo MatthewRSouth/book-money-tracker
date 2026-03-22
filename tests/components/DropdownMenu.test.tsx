@@ -55,7 +55,7 @@ describe('DropdownMenu', () => {
     const { user } = setup();
     await user.click(screen.getByRole('button', { name: /⋯/ }));
     const deleteBtn = screen.getByText('Delete');
-    expect(deleteBtn).toHaveClass('text-red-400');
+    expect(deleteBtn).toHaveClass('text-red-600');
   });
 
   it('navigates items with Arrow keys', async () => {

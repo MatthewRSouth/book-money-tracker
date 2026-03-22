@@ -55,3 +55,9 @@ export interface ImportStudentRow {
   usesDefault: boolean; // true if balance came from the default field, not the file
   status: 'ok' | 'missing_name';
 }
+
+export interface GroupData {
+  group: ClassGroup;
+  books: Book[];
+  students: StudentRow[];
+}

@@ -2,12 +2,11 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import type { ClassGroup, Book, StudentRow } from '@/types';
+import type { ClassGroup } from '@/types';
 import ClassTabs from '@/components/ClassTabs';
-import SummaryBar from '@/components/SummaryBar';
-import StudentTable from '@/components/StudentTable';
 import GlobalSearch from '@/components/GlobalSearch';
 import LogoutButton from '@/components/LogoutButton';
+import TabContent, { TabContentSkeleton } from '@/components/TabContent';
 
 interface DashboardPageProps {
   searchParams: Promise<{ tab?: string; highlight?: string }>;
@@ -43,54 +42,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const activeGroup: ClassGroup =
     groups.find((g) => g.id === tab) ?? groups[0];
 
-  // Fetch books and students for the active group in parallel
-  const [booksResult, studentsResult] = await Promise.all([
-    supabase
-      .from('books')
-      .select('id, class_group_id, title, price_yen, sort_order')
-      .eq('class_group_id', activeGroup.id)
-      .order('sort_order'),
-    supabase
-      .from('students')
-      .select('id, class_group_id, name, balance_yen, notes')
-      .eq('class_group_id', activeGroup.id)
-      .order('created_at'),
-  ]);
-
-  const books: Book[] = booksResult.data ?? [];
-  const rawStudents = studentsResult.data ?? [];
-
-  // Fetch which books each student has received
-  let receivedData: { student_id: string; book_id: string }[] = [];
-  if (rawStudents.length > 0) {
-    const studentIds = rawStudents.map((s) => s.id);
-    const { data } = await supabase
-      .from('student_books')
-      .select('student_id, book_id')
-      .in('student_id', studentIds);
-    receivedData = data ?? [];
-  }
-
-  // Build a map: student_id → Set<book_id>
-  const receivedMap = new Map<string, Set<string>>();
-  for (const row of receivedData) {
-    if (!receivedMap.has(row.student_id)) {
-      receivedMap.set(row.student_id, new Set());
-    }
-    receivedMap.get(row.student_id)!.add(row.book_id);
-  }
-
-  const students: StudentRow[] = rawStudents.map((s) => ({
-    ...s,
-    received_book_ids: receivedMap.get(s.id) ?? new Set(),
-  }));
-
-  // Compute summary stats
-  const totalBalance = students.reduce((sum, s) => sum + s.balance_yen, 0);
-  const fullyPaidOut = students.filter(
-    (s) => books.length > 0 && books.every((b) => s.received_book_ids.has(b.id))
-  ).length;
-
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-screen-2xl mx-auto">
       {/* Header */}
@@ -120,21 +71,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </Suspense>
       </div>
 
-      {/* Summary bar */}
-      <SummaryBar
-        studentCount={students.length}
-        totalBalance={totalBalance}
-        fullyPaidOut={fullyPaidOut}
-      />
-
-      {/* Student table */}
-      <StudentTable
-        books={books}
-        students={students}
-        classGroupId={activeGroup.id}
-        classGroupName={activeGroup.name}
-        highlightStudentId={highlight}
-      />
+      {/* Tab content streams in behind skeleton */}
+      <Suspense fallback={<TabContentSkeleton />}>
+        <TabContent
+          groupId={activeGroup.id}
+          groupName={activeGroup.name}
+          highlightStudentId={highlight}
+        />
+      </Suspense>
     </div>
   );
 }

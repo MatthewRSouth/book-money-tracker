@@ -55,3 +55,37 @@ export async function deleteBook(
   revalidatePath('/dashboard');
   return { error: null };
 }
+
+export async function moveBook(
+  bookId: string,
+  direction: 'up' | 'down',
+  classGroupId: string
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+
+  const { data: books, error: fetchError } = await supabase
+    .from('books')
+    .select('id, sort_order')
+    .eq('class_group_id', classGroupId)
+    .order('sort_order');
+
+  if (fetchError || !books) return { error: fetchError?.message ?? 'Failed to fetch books' };
+
+  const idx = books.findIndex((b) => b.id === bookId);
+  if (idx === -1) return { error: 'Book not found' };
+
+  const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= books.length) return { error: null };
+
+  const current = books[idx];
+  const swap = books[swapIdx];
+
+  // Use a temp value to avoid unique constraint conflicts
+  const tempOrder = Math.max(...books.map((b) => b.sort_order)) + 999;
+  await supabase.from('books').update({ sort_order: tempOrder }).eq('id', current.id);
+  await supabase.from('books').update({ sort_order: current.sort_order }).eq('id', swap.id);
+  await supabase.from('books').update({ sort_order: swap.sort_order }).eq('id', current.id);
+
+  revalidatePath('/dashboard');
+  return { error: null };
+}

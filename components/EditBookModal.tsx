@@ -66,7 +66,7 @@ export default function EditBookModal({
             onChange={(e) => setTitle(e.target.value)}
             required
             autoFocus
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
           />
         </div>
 
@@ -77,7 +77,7 @@ export default function EditBookModal({
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             min={0}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
           />
           <p className="mt-1 text-xs text-zinc-500">
             Changing the price will retroactively adjust balances for students who already received this book.
@@ -97,7 +97,7 @@ export default function EditBookModal({
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-4 py-2 text-sm bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Saving…' : 'Save'}
           </button>

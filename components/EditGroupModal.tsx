@@ -2,29 +2,28 @@
 
 import { useState } from 'react';
 import Modal from './ui/Modal';
-import { addStudent } from '@/lib/actions/students';
+import { updateGroup } from '@/lib/actions/groups';
+import type { ClassGroup } from '@/types';
 
-interface AddStudentModalProps {
+interface EditGroupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  classGroupId: string;
+  group: ClassGroup;
   onSuccess: () => void;
 }
 
-export default function AddStudentModal({
+export default function EditGroupModal({
   isOpen,
   onClose,
-  classGroupId,
+  group,
   onSuccess,
-}: AddStudentModalProps) {
-  const [name, setName] = useState('');
-  const [balance, setBalance] = useState('20000');
+}: EditGroupModalProps) {
+  const [name, setName] = useState(group.name);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   function handleClose() {
-    setName('');
-    setBalance('20000');
+    setName(group.name);
     setError('');
     onClose();
   }
@@ -32,35 +31,25 @@ export default function AddStudentModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-
-    const parsedBalance = parseInt(balance, 10);
     if (!name.trim()) {
-      setError('Name is required.');
+      setError('Group name is required.');
       return;
     }
-    if (isNaN(parsedBalance)) {
-      setError('Balance must be a number.');
-      return;
-    }
-
     setLoading(true);
-    const { error: err } = await addStudent(name.trim(), parsedBalance, classGroupId);
+    const { error: err } = await updateGroup(group.id, name.trim());
     setLoading(false);
-
     if (err) {
       setError(err);
     } else {
-      setName('');
-      setBalance('20000');
       onSuccess();
     }
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Add student">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Rename group">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-zinc-300 mb-1">Name</label>
+          <label className="block text-sm font-medium text-zinc-300 mb-1">Group name</label>
           <input
             type="text"
             value={name}
@@ -68,22 +57,7 @@ export default function AddStudentModal({
             required
             autoFocus
             className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
-            placeholder="Student name"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-zinc-300 mb-1">
-            Starting balance (¥)
-          </label>
-          <input
-            type="number"
-            value={balance}
-            onChange={(e) => setBalance(e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
-            placeholder="20000"
-          />
-          <p className="mt-1 text-xs text-zinc-500">Defaults to ¥20,000 if left blank</p>
         </div>
 
         {error && <p className="text-sm text-red-400">{error}</p>}
@@ -101,7 +75,7 @@ export default function AddStudentModal({
             disabled={loading}
             className="flex-1 px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           >
-            {loading ? 'Adding…' : 'Add student'}
+            {loading ? 'Saving…' : 'Save'}
           </button>
         </div>
       </form>

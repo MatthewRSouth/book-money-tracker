@@ -67,7 +67,7 @@ export default function AddBookModal({
             onChange={(e) => setTitle(e.target.value)}
             required
             autoFocus
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
             placeholder="e.g. Oxford Phonics 1"
           />
         </div>
@@ -80,7 +80,7 @@ export default function AddBookModal({
             onChange={(e) => setPrice(e.target.value)}
             required
             min={0}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
             placeholder="e.g. 2000"
           />
           <p className="mt-1 text-xs text-zinc-500">
@@ -101,7 +101,7 @@ export default function AddBookModal({
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-4 py-2 text-sm bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Adding…' : 'Add book'}
           </button>

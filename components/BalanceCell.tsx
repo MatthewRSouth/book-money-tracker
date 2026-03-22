@@ -6,9 +6,10 @@ import { formatYen } from '@/lib/utils/formatYen';
 interface BalanceCellProps {
   balance: number;
   flash: 'up' | 'down' | null;
+  onClick?: () => void;
 }
 
-export default function BalanceCell({ balance, flash }: BalanceCellProps) {
+export default function BalanceCell({ balance, flash, onClick }: BalanceCellProps) {
   const [animKey, setAnimKey] = useState(0);
 
   useEffect(() => {
@@ -26,7 +27,10 @@ export default function BalanceCell({ balance, flash }: BalanceCellProps) {
       : '';
 
   return (
-    <td className="px-4 py-3 whitespace-nowrap">
+    <td
+      className={`px-4 py-3 whitespace-nowrap${onClick ? ' cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <span
         key={animKey}
         className={`inline-block px-2 py-0.5 rounded font-medium text-sm ${colorClass} ${animClass}`}

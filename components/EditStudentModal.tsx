@@ -73,7 +73,7 @@ export default function EditStudentModal({
             onChange={(e) => setName(e.target.value)}
             required
             autoFocus
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
           />
         </div>
 
@@ -83,7 +83,7 @@ export default function EditStudentModal({
             type="number"
             value={balance}
             onChange={(e) => setBalance(e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
           />
           <p className="mt-1 text-xs text-zinc-500">
             Directly sets the balance without recording a payment. Use &quot;Record payment&quot; for incoming money.
@@ -96,7 +96,7 @@ export default function EditStudentModal({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm resize-none"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm resize-none"
             placeholder="Optional notes about this student"
           />
         </div>
@@ -114,7 +114,7 @@ export default function EditStudentModal({
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-4 py-2 text-sm bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Saving…' : 'Save'}
           </button>

@@ -32,3 +32,12 @@ export interface Payment {
   paid_at: string;
   created_at: string;
 }
+
+export interface HistoryEntry {
+  id: string;
+  type: 'payment' | 'book';
+  date: string;
+  amount_yen: number;
+  label: string;
+  created_at: string;
+}

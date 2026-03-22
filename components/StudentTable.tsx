@@ -12,9 +12,10 @@ import EditBookModal from './EditBookModal';
 import RecordPaymentModal from './RecordPaymentModal';
 import DropdownMenu from './ui/DropdownMenu';
 import ConfirmDialog from './ui/ConfirmDialog';
+import StudentHistoryModal from './StudentHistoryModal';
 import { toggleBook } from '@/lib/actions/toggle';
 import { deleteStudent } from '@/lib/actions/students';
-import { deleteBook } from '@/lib/actions/books';
+import { deleteBook, moveBook } from '@/lib/actions/books';
 
 interface StudentTableProps {
   books: Book[];
@@ -47,10 +48,14 @@ export default function StudentTable({
   const [payingStudent, setPayingStudent] = useState<StudentRow | null>(null);
   const [deleteStudentLoading, setDeleteStudentLoading] = useState(false);
 
-  // Book edit/delete state
+  // Book edit/delete/reorder state
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [deletingBook, setDeletingBook] = useState<Book | null>(null);
   const [deleteBookLoading, setDeleteBookLoading] = useState(false);
+  const [movingBookId, setMovingBookId] = useState<string | null>(null);
+
+  // History modal state
+  const [historyStudent, setHistoryStudent] = useState<StudentRow | null>(null);
 
   // Sync when server re-renders with fresh data
   useEffect(() => {
@@ -115,6 +120,19 @@ export default function StudentTable({
     refresh();
   }
 
+  async function handleMoveBook(bookId: string, direction: 'up' | 'down') {
+    if (movingBookId) return;
+    setMovingBookId(bookId);
+    const { error } = await moveBook(bookId, direction, classGroupId);
+    setMovingBookId(null);
+    if (error) {
+      setErrorMsg('Failed to reorder book. Please try again.');
+      setTimeout(() => setErrorMsg(''), 4000);
+    } else {
+      refresh();
+    }
+  }
+
   async function handleDeleteBook() {
     if (!deletingBook) return;
     setDeleteBookLoading(true);
@@ -171,14 +189,30 @@ export default function StudentTable({
                   <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide whitespace-nowrap">
                     Balance
                   </th>
-                  {books.map((book) => (
+                  {books.map((book, bookIndex) => (
                     <th
                       key={book.id}
                       className="px-4 py-3 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide whitespace-nowrap relative"
                     >
                       <div className="flex flex-col items-center gap-0.5">
                         <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleMoveBook(book.id, 'up')}
+                            disabled={bookIndex === 0 || !!movingBookId}
+                            className="p-0.5 text-zinc-500 hover:text-teal-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            aria-label="Move book left"
+                          >
+                            ◀
+                          </button>
                           <span>{book.title}</span>
+                          <button
+                            onClick={() => handleMoveBook(book.id, 'down')}
+                            disabled={bookIndex === books.length - 1 || !!movingBookId}
+                            className="p-0.5 text-zinc-500 hover:text-teal-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            aria-label="Move book right"
+                          >
+                            ▶
+                          </button>
                           <DropdownMenu
                             items={[
                               { label: 'Edit book', onClick: () => setEditingBook(book) },
@@ -200,10 +234,14 @@ export default function StudentTable({
                     <tr className="hover:bg-zinc-800/30 transition-colors">
                       <td className="px-4 py-3 font-medium text-zinc-100 whitespace-nowrap">
                         <div className="flex items-center justify-between gap-2">
-                          <span>{student.name}</span>
+                          <button
+                            onClick={() => setEditingStudent(student)}
+                            className="hover:text-teal-300 hover:underline text-left transition-colors"
+                          >
+                            {student.name}
+                          </button>
                           <DropdownMenu
                             items={[
-                              { label: 'Edit student', onClick: () => setEditingStudent(student) },
                               { label: 'Record payment', onClick: () => setPayingStudent(student) },
                               { label: 'Delete', onClick: () => setDeletingStudent(student), destructive: true },
                             ]}
@@ -213,6 +251,7 @@ export default function StudentTable({
                       <BalanceCell
                         balance={student.balance_yen}
                         flash={flashState[student.id] ?? null}
+                        onClick={() => setHistoryStudent(student)}
                       />
                       {books.map((book) => {
                         const checked = student.received_book_ids.has(book.id);
@@ -256,6 +295,14 @@ export default function StudentTable({
         classGroupId={classGroupId}
         onSuccess={() => { setShowAddBook(false); refresh(); }}
       />
+
+      {historyStudent && (
+        <StudentHistoryModal
+          isOpen={true}
+          onClose={() => setHistoryStudent(null)}
+          student={historyStudent}
+        />
+      )}
 
       {editingStudent && (
         <EditStudentModal

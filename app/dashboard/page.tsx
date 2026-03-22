@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import type { ClassGroup, Book, StudentRow } from '@/types';
 import ClassTabs from '@/components/ClassTabs';
@@ -92,7 +93,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     <div className="min-h-screen p-4 sm:p-6 max-w-screen-2xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-zinc-100 mb-4">Book Money Tracker</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-semibold text-zinc-100">Book Money Tracker</h1>
+          <div className="flex gap-4 text-sm">
+            <Link href="/overview" className="text-zinc-400 hover:text-teal-300 transition-colors">
+              Overview
+            </Link>
+            <Link href="/manage" className="text-zinc-400 hover:text-teal-300 transition-colors">
+              Manage groups
+            </Link>
+          </div>
+        </div>
         <Suspense>
           <ClassTabs groups={groups} activeGroupId={activeGroup.id} />
         </Suspense>

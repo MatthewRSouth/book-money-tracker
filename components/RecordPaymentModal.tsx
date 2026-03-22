@@ -79,7 +79,7 @@ export default function RecordPaymentModal({
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             autoFocus
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
             placeholder="e.g. 5000"
           />
         </div>
@@ -90,7 +90,7 @@ export default function RecordPaymentModal({
             type="text"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
             placeholder="e.g. Cash envelope"
           />
         </div>
@@ -102,7 +102,7 @@ export default function RecordPaymentModal({
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:border-zinc-500 text-sm"
+            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:border-teal-500 text-sm"
           />
         </div>
 
@@ -119,7 +119,7 @@ export default function RecordPaymentModal({
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-4 py-2 text-sm bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Recording…' : 'Record payment'}
           </button>

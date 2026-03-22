@@ -60,15 +60,15 @@ export default function DropdownMenu({ items, trigger }: DropdownMenuProps) {
     }
   }
 
-  // Determine if menu should flip upward
+  // Determine if menu should flip upward or leftward
   function getMenuPosition(): React.CSSProperties {
-    if (!containerRef.current) return { top: '100%', left: 0 };
+    if (!containerRef.current) return { top: '100%', right: 0 };
     const rect = containerRef.current.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
-    if (spaceBelow < 150) {
-      return { bottom: '100%', left: 0 };
-    }
-    return { top: '100%', left: 0 };
+    const spaceRight = window.innerWidth - rect.right;
+    const vertical: React.CSSProperties = spaceBelow < 150 ? { bottom: '100%' } : { top: '100%' };
+    const horizontal: React.CSSProperties = spaceRight < 160 ? { right: 0 } : { left: 0 };
+    return { ...vertical, ...horizontal };
   }
 
   return (

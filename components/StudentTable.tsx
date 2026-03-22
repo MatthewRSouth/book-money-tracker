@@ -215,11 +215,11 @@ export default function StudentTable({
 
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         {/* Table header row with group name + buttons */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <span className="text-sm font-medium text-foreground">{classGroupName}</span>
-          <div className="flex gap-2">
+        <div className="flex items-center gap-3 px-4 py-2 border-b border-border">
+          <span className="text-sm font-medium text-foreground shrink-0 mr-auto">{classGroupName}</span>
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide shrink-0">
             <DropdownMenu
-              trigger={<span className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors cursor-pointer">Export ▾</span>}
+              trigger={<span className="flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors cursor-pointer whitespace-nowrap">Export ▾</span>}
               items={[
                 { label: 'CSV', onClick: handleExportCSV },
                 { label: 'Excel (.xlsx)', onClick: handleExportXLSX },
@@ -227,19 +227,19 @@ export default function StudentTable({
             />
             <button
               onClick={() => setShowImport(true)}
-              className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
+              className="flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors whitespace-nowrap"
             >
               Import
             </button>
             <button
               onClick={() => setShowAddBook(true)}
-              className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
+              className="flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors whitespace-nowrap"
             >
               + Add book
             </button>
             <button
               onClick={() => setShowAddStudent(true)}
-              className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
+              className="flex items-center px-3 min-h-11 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors whitespace-nowrap"
             >
               + Add student
             </button>
@@ -255,10 +255,10 @@ export default function StudentTable({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-background/70">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">
+                  <th className="sticky left-0 z-20 bg-card w-36 min-w-36 px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap border-r border-border">
                     Student
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">
+                  <th className="sticky left-36 z-20 bg-card w-24 min-w-24 px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap border-r border-border">
                     Balance
                   </th>
                   {books.map((book, bookIndex) => (
@@ -318,7 +318,7 @@ export default function StudentTable({
                       }}
                       className={`hover:bg-background transition-colors ${highlightedId === student.id ? 'ring-2 ring-inset ring-primary' : ''}`}
                     >
-                      <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">
+                      <td className="sticky left-0 z-10 bg-card w-36 min-w-36 px-4 py-3 font-medium text-foreground whitespace-nowrap border-r border-border">
                         <div className="flex items-center justify-between gap-2">
                           <button
                             onClick={() => setEditingStudent(student)}
@@ -338,6 +338,7 @@ export default function StudentTable({
                         balance={student.balance_yen}
                         flash={flashState[student.id] ?? null}
                         onClick={() => setHistoryStudent(student)}
+                        className="sticky left-36 z-10 bg-card w-24 min-w-24 border-r border-border"
                       />
                       {books.map((book) => {
                         const checked = student.received_book_ids.has(book.id);

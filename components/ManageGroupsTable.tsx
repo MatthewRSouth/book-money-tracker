@@ -79,13 +79,13 @@ export default function ManageGroupsTable({ groups, studentCounts }: ManageGroup
                     <div className="flex gap-2 justify-end">
                       <button
                         onClick={() => setEditingGroup(group)}
-                        className="px-3 py-1 text-xs border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
+                        className="px-3 min-h-11 text-xs border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
                       >
                         Rename
                       </button>
                       <button
                         onClick={() => setDeletingGroup(group)}
-                        className="px-3 py-1 text-xs border border-red-300 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                        className="px-3 min-h-11 text-xs border border-red-300 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
                       >
                         Delete
                       </button>
@@ -100,7 +100,7 @@ export default function ManageGroupsTable({ groups, studentCounts }: ManageGroup
 
       <button
         onClick={() => setShowAdd(true)}
-        className="px-4 py-2 text-sm bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
+        className="px-4 min-h-11 text-sm bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
       >
         + Add group
       </button>

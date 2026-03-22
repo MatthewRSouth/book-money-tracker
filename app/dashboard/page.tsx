@@ -89,24 +89,49 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-screen-2xl mx-auto">
       {/* Static header — renders immediately, no data dependency */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold text-foreground">Book Money Tracker</h1>
-        <div className="flex items-center gap-4">
+      <div className="mb-4 space-y-2 sm:space-y-0">
+        {/* Row 1: always visible */}
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-xl font-semibold text-foreground">Book Money Tracker</h1>
+          {/* Desktop: search + nav all in one row */}
+          <div className="hidden sm:flex items-center gap-4">
+            <Suspense>
+              <GlobalSearch />
+            </Suspense>
+            <div className="flex gap-4 text-sm">
+              <Link href="/overview" className="text-muted hover:text-primary transition-colors">
+                Overview
+              </Link>
+              <Link href="/manage" className="text-muted hover:text-primary transition-colors">
+                Manage groups
+              </Link>
+              <Link href="/rollover" className="text-muted hover:text-primary transition-colors">
+                Rollover
+              </Link>
+              <LogoutButton />
+            </div>
+          </div>
+          {/* Mobile: only logout */}
+          <div className="sm:hidden">
+            <LogoutButton />
+          </div>
+        </div>
+        {/* Mobile-only rows: search + nav */}
+        <div className="sm:hidden space-y-2">
           <Suspense>
             <GlobalSearch />
           </Suspense>
-          <div className="flex gap-4 text-sm">
-            <Link href="/overview" className="text-muted hover:text-primary transition-colors">
+          <nav className="flex gap-4 text-sm overflow-x-auto scrollbar-hide pb-0.5">
+            <Link href="/overview" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
               Overview
             </Link>
-            <Link href="/manage" className="text-muted hover:text-primary transition-colors">
+            <Link href="/manage" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
               Manage groups
             </Link>
-            <Link href="/rollover" className="text-muted hover:text-primary transition-colors">
+            <Link href="/rollover" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
               Rollover
             </Link>
-            <LogoutButton />
-          </div>
+          </nav>
         </div>
       </div>
 

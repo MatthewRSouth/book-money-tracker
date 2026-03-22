@@ -34,3 +34,10 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
 }
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

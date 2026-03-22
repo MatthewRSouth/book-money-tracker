@@ -7,9 +7,10 @@ interface BalanceCellProps {
   balance: number;
   flash: 'up' | 'down' | null;
   onClick?: () => void;
+  className?: string;
 }
 
-export default function BalanceCell({ balance, flash, onClick }: BalanceCellProps) {
+export default function BalanceCell({ balance, flash, onClick, className }: BalanceCellProps) {
   const [animKey, setAnimKey] = useState(0);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function BalanceCell({ balance, flash, onClick }: BalanceCellProp
 
   return (
     <td
-      className={`px-4 py-3 whitespace-nowrap${onClick ? ' cursor-pointer' : ''}`}
+      className={`px-4 py-3 whitespace-nowrap${onClick ? ' cursor-pointer' : ''}${className ? ` ${className}` : ''}`}
       onClick={onClick}
     >
       <span

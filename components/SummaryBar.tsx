@@ -12,7 +12,7 @@ export default function SummaryBar({
   fullyPaidOut,
 }: SummaryBarProps) {
   return (
-    <div className="flex gap-8 py-4">
+    <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 py-4">
       <div>
         <p className="text-xs text-muted uppercase tracking-wide">Students</p>
         <p className="text-2xl font-semibold text-foreground mt-0.5">{studentCount}</p>

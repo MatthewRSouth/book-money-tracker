@@ -23,7 +23,7 @@ export default async function RolloverPage() {
   }
 
   return (
-    <div className="min-h-screen p-6 max-w-xl mx-auto">
+    <div className="min-h-screen p-4 sm:p-6 max-w-xl mx-auto">
       <Link href="/dashboard" className="text-sm text-muted hover:text-primary transition-colors">
         ← Back to dashboard
       </Link>

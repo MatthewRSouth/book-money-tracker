@@ -118,21 +118,21 @@ export default async function OverviewPage() {
         {negativeBalances.length === 0 ? (
           <p className="text-sm text-muted">None — all balances are positive.</p>
         ) : (
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-background/70">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Balance</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {negativeBalances.map((s) => (
                   <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
-                    <td className="px-4 py-3 text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className="px-4 py-3 text-red-500 font-medium">{formatYen(s.balance_yen)}</td>
+                    <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
+                    <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                    <td className="px-4 py-3 text-red-500 font-medium whitespace-nowrap">{formatYen(s.balance_yen)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -149,21 +149,21 @@ export default async function OverviewPage() {
         {noBooks.length === 0 ? (
           <p className="text-sm text-muted">All students have received at least one book.</p>
         ) : (
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-background/70">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Balance</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {noBooks.map((s) => (
                   <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
-                    <td className="px-4 py-3 text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className="px-4 py-3 text-foreground">{formatYen(s.balance_yen)}</td>
+                    <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
+                    <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                    <td className="px-4 py-3 text-foreground whitespace-nowrap">{formatYen(s.balance_yen)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -180,21 +180,21 @@ export default async function OverviewPage() {
         {fullyDistributed.length === 0 ? (
           <p className="text-sm text-muted">No students have received every book in their group yet.</p>
         ) : (
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-background/70">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Balance</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {fullyDistributed.map((s) => (
                   <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
-                    <td className="px-4 py-3 text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className={`px-4 py-3 font-medium ${s.balance_yen < 0 ? 'text-red-500' : 'text-green-600'}`}>
+                    <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
+                    <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                    <td className={`px-4 py-3 font-medium whitespace-nowrap ${s.balance_yen < 0 ? 'text-red-500' : 'text-green-600'}`}>
                       {formatYen(s.balance_yen)}
                     </td>
                   </tr>

@@ -59,7 +59,7 @@ export default function GlobalSearch() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
           placeholder="Search students…"
-          className="w-48 sm:w-64 bg-card border border-border rounded px-3 py-1.5 text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+          className="w-full sm:w-48 lg:w-64 bg-card border border-border rounded px-3 py-1.5 text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
         />
         {isPending && (
           <span className="absolute right-2 top-1/2 -translate-y-1/2 text-muted">
@@ -72,7 +72,7 @@ export default function GlobalSearch() {
       </div>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-72 bg-card border border-border rounded shadow-lg overflow-hidden">
+        <div className="absolute z-50 mt-1 w-full sm:w-72 bg-card border border-border rounded shadow-lg overflow-hidden">
           {results.length === 0 ? (
             <p className="px-3 py-2 text-sm text-muted">No students found.</p>
           ) : (

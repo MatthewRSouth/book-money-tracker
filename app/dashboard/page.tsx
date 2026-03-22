@@ -6,9 +6,10 @@ import type { ClassGroup, Book, StudentRow } from '@/types';
 import ClassTabs from '@/components/ClassTabs';
 import SummaryBar from '@/components/SummaryBar';
 import StudentTable from '@/components/StudentTable';
+import GlobalSearch from '@/components/GlobalSearch';
 
 interface DashboardPageProps {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; highlight?: string }>;
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
@@ -36,8 +37,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     );
   }
 
-  // Resolve active tab
-  const { tab } = await searchParams;
+  // Resolve active tab + highlight
+  const { tab, highlight } = await searchParams;
   const activeGroup: ClassGroup =
     groups.find((g) => g.id === tab) ?? groups[0];
 
@@ -95,13 +96,21 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-semibold text-zinc-100">Book Money Tracker</h1>
-          <div className="flex gap-4 text-sm">
-            <Link href="/overview" className="text-zinc-400 hover:text-teal-300 transition-colors">
-              Overview
-            </Link>
-            <Link href="/manage" className="text-zinc-400 hover:text-teal-300 transition-colors">
-              Manage groups
-            </Link>
+          <div className="flex items-center gap-4">
+            <Suspense>
+              <GlobalSearch />
+            </Suspense>
+            <div className="flex gap-4 text-sm">
+              <Link href="/overview" className="text-zinc-400 hover:text-teal-300 transition-colors">
+                Overview
+              </Link>
+              <Link href="/manage" className="text-zinc-400 hover:text-teal-300 transition-colors">
+                Manage groups
+              </Link>
+              <Link href="/rollover" className="text-zinc-400 hover:text-teal-300 transition-colors">
+                Rollover
+              </Link>
+            </div>
           </div>
         </div>
         <Suspense>
@@ -122,6 +131,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         students={students}
         classGroupId={activeGroup.id}
         classGroupName={activeGroup.name}
+        highlightStudentId={highlight}
       />
     </div>
   );

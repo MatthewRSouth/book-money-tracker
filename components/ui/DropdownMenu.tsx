@@ -10,9 +10,10 @@ export interface DropdownMenuItem {
 
 interface DropdownMenuProps {
   items: DropdownMenuItem[];
+  trigger?: React.ReactNode;
 }
 
-export default function DropdownMenu({ items }: DropdownMenuProps) {
+export default function DropdownMenu({ items, trigger }: DropdownMenuProps) {
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,9 +82,9 @@ export default function DropdownMenu({ items }: DropdownMenuProps) {
           e.stopPropagation();
           setOpen((o) => !o);
         }}
-        className="p-1 rounded text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors leading-none"
+        className={trigger ? '' : 'p-1 rounded text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors leading-none'}
       >
-        ⋯
+        {trigger ?? '⋯'}
       </button>
 
       {open && (

@@ -41,3 +41,17 @@ export interface HistoryEntry {
   label: string;
   created_at: string;
 }
+
+export interface SearchResult {
+  student_id: string;
+  student_name: string;
+  group_id: string;
+  group_name: string;
+}
+
+export interface ImportStudentRow {
+  name: string;
+  balance_yen: number;
+  usesDefault: boolean; // true if balance came from the default field, not the file
+  status: 'ok' | 'missing_name';
+}

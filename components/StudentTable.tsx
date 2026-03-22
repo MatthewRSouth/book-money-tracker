@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Book, StudentRow } from '@/types';
 import BookCheckbox from './BookCheckbox';
@@ -13,6 +13,8 @@ import RecordPaymentModal from './RecordPaymentModal';
 import DropdownMenu from './ui/DropdownMenu';
 import ConfirmDialog from './ui/ConfirmDialog';
 import StudentHistoryModal from './StudentHistoryModal';
+import ImportStudentsModal from './ImportStudentsModal';
+import BulkReceiveModal from './BulkReceiveModal';
 import { toggleBook } from '@/lib/actions/toggle';
 import { deleteStudent } from '@/lib/actions/students';
 import { deleteBook, moveBook } from '@/lib/actions/books';
@@ -22,6 +24,7 @@ interface StudentTableProps {
   students: StudentRow[];
   classGroupId: string;
   classGroupName: string;
+  highlightStudentId?: string;
 }
 
 type FlashState = Record<string, 'up' | 'down' | null>;
@@ -31,16 +34,20 @@ export default function StudentTable({
   students: initialStudents,
   classGroupId,
   classGroupName,
+  highlightStudentId,
 }: StudentTableProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
   const [localStudents, setLocalStudents] = useState<StudentRow[]>(initialStudents);
   const [flashState, setFlashState] = useState<FlashState>({});
+  const [highlightedId, setHighlightedId] = useState<string | undefined>(highlightStudentId);
   const [pending, setPending] = useState<Set<string>>(new Set());
   const [showAddStudent, setShowAddStudent] = useState(false);
   const [showAddBook, setShowAddBook] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const rowRefs = useRef<Map<string, HTMLTableRowElement>>(new Map());
 
   // Student edit/delete/payment state
   const [editingStudent, setEditingStudent] = useState<StudentRow | null>(null);
@@ -54,6 +61,9 @@ export default function StudentTable({
   const [deleteBookLoading, setDeleteBookLoading] = useState(false);
   const [movingBookId, setMovingBookId] = useState<string | null>(null);
 
+  // Bulk receive state
+  const [bulkBook, setBulkBook] = useState<Book | null>(null);
+
   // History modal state
   const [historyStudent, setHistoryStudent] = useState<StudentRow | null>(null);
 
@@ -61,6 +71,18 @@ export default function StudentTable({
   useEffect(() => {
     setLocalStudents(initialStudents);
   }, [initialStudents]);
+
+  // Highlight + scroll when highlightStudentId changes
+  useEffect(() => {
+    if (!highlightStudentId) return;
+    setHighlightedId(highlightStudentId);
+    const row = rowRefs.current.get(highlightStudentId);
+    if (row) {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    const timer = setTimeout(() => setHighlightedId(undefined), 2000);
+    return () => clearTimeout(timer);
+  }, [highlightStudentId]);
 
   async function handleToggle(studentId: string, bookId: string, bookPrice: number, currentlyChecked: boolean) {
     const receiving = !currentlyChecked;
@@ -105,6 +127,43 @@ export default function StudentTable({
 
   function refresh() {
     startTransition(() => router.refresh());
+  }
+
+  function buildExportData() {
+    const today = new Date().toISOString().slice(0, 10);
+    const bookTitles = books.map((b) => b.title);
+    const header = ['Name', 'Balance (¥)', 'Notes', ...bookTitles];
+    const rows = localStudents.map((s) => [
+      s.name,
+      s.balance_yen,
+      s.notes ?? '',
+      ...books.map((b) => (s.received_book_ids.has(b.id) ? '✓' : '')),
+    ]);
+    return { header, rows, filename: `${classGroupName}-${today}` };
+  }
+
+  function handleExportCSV() {
+    const { header, rows, filename } = buildExportData();
+    const all = [header, ...rows];
+    const csv = all
+      .map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleExportXLSX() {
+    const { header, rows, filename } = buildExportData();
+    const XLSX = await import('xlsx');
+    const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, classGroupName.slice(0, 31));
+    XLSX.writeFile(wb, `${filename}.xlsx`);
   }
 
   async function handleDeleteStudent() {
@@ -159,6 +218,19 @@ export default function StudentTable({
         <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
           <span className="text-sm font-medium text-zinc-300">{classGroupName}</span>
           <div className="flex gap-2">
+            <DropdownMenu
+              trigger={<span className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors cursor-pointer">Export ▾</span>}
+              items={[
+                { label: 'CSV', onClick: handleExportCSV },
+                { label: 'Excel (.xlsx)', onClick: handleExportXLSX },
+              ]}
+            />
+            <button
+              onClick={() => setShowImport(true)}
+              className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
+            >
+              Import
+            </button>
             <button
               onClick={() => setShowAddBook(true)}
               className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
@@ -213,6 +285,14 @@ export default function StudentTable({
                           >
                             ▶
                           </button>
+                          <button
+                            onClick={() => setBulkBook(book)}
+                            className="p-0.5 text-zinc-500 hover:text-teal-300 transition-colors"
+                            title="Distribute to all"
+                            aria-label="Distribute book to all students"
+                          >
+                            ⬇
+                          </button>
                           <DropdownMenu
                             items={[
                               { label: 'Edit book', onClick: () => setEditingBook(book) },
@@ -231,7 +311,13 @@ export default function StudentTable({
               <tbody className="divide-y divide-zinc-800">
                 {localStudents.map((student) => (
                   <React.Fragment key={student.id}>
-                    <tr className="hover:bg-zinc-800/30 transition-colors">
+                    <tr
+                      ref={(el) => {
+                        if (el) rowRefs.current.set(student.id, el);
+                        else rowRefs.current.delete(student.id);
+                      }}
+                      className={`hover:bg-zinc-800/30 transition-colors ${highlightedId === student.id ? 'ring-2 ring-inset ring-teal-400' : ''}`}
+                    >
                       <td className="px-4 py-3 font-medium text-zinc-100 whitespace-nowrap">
                         <div className="flex items-center justify-between gap-2">
                           <button
@@ -295,6 +381,34 @@ export default function StudentTable({
         classGroupId={classGroupId}
         onSuccess={() => { setShowAddBook(false); refresh(); }}
       />
+      <ImportStudentsModal
+        isOpen={showImport}
+        onClose={() => setShowImport(false)}
+        classGroupId={classGroupId}
+        classGroupName={classGroupName}
+        onSuccess={() => { setShowImport(false); refresh(); }}
+      />
+      {bulkBook && (
+        <BulkReceiveModal
+          isOpen={true}
+          onClose={() => setBulkBook(null)}
+          book={bulkBook}
+          classGroupId={classGroupId}
+          students={localStudents}
+          onSuccess={(bookId, priceYen) => {
+            setLocalStudents((prev) =>
+              prev.map((s) => {
+                if (s.received_book_ids.has(bookId)) return s;
+                const newIds = new Set(s.received_book_ids);
+                newIds.add(bookId);
+                return { ...s, received_book_ids: newIds, balance_yen: s.balance_yen - priceYen };
+              })
+            );
+            setBulkBook(null);
+            refresh();
+          }}
+        />
+      )}
 
       {historyStudent && (
         <StudentHistoryModal

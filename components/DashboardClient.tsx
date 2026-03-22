@@ -47,7 +47,7 @@ export default function DashboardClient({
 
   return (
     <>
-      <div className="mb-6">
+      <div className="mb-6 sm:mx-0 mx-8">
         <ClassTabs
           groups={groups}
           activeGroupId={activeGroupId}

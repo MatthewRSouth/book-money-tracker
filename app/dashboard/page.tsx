@@ -89,10 +89,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-screen-2xl mx-auto">
       {/* Static header — renders immediately, no data dependency */}
-      <div className="mb-4 space-y-2 sm:space-y-0">
-        {/* Row 1: always visible */}
-        <div className="flex items-center justify-between gap-2">
-          <h1 className="text-xl font-semibold text-foreground">Book Money Tracker</h1>
+      <div className="mb-6 sm:mb-4 space-y-4 sm:space-y-0">
+        {/* Row 1: title + actions */}
+        <div className="relative flex items-center justify-center sm:justify-between gap-2">
+          <h1 className="text-xl font-semibold text-foreground text-center sm:text-left">Book Money Tracker</h1>
           {/* Desktop: search + nav all in one row */}
           <div className="hidden sm:flex items-center gap-4">
             <Suspense>
@@ -111,17 +111,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <LogoutButton />
             </div>
           </div>
-          {/* Mobile: only logout */}
-          <div className="sm:hidden">
+          {/* Mobile: logout pinned to the right */}
+          <div className="sm:hidden absolute right-0">
             <LogoutButton />
           </div>
         </div>
         {/* Mobile-only rows: search + nav */}
-        <div className="sm:hidden space-y-2">
-          <Suspense>
-            <GlobalSearch />
-          </Suspense>
-          <nav className="flex gap-4 text-sm overflow-x-auto scrollbar-hide pb-0.5">
+        <div className="sm:hidden space-y-4">
+          <div className="mx-8">
+            <Suspense>
+              <GlobalSearch />
+            </Suspense>
+          </div>
+          <nav className="flex justify-around text-sm">
             <Link href="/overview" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
               Overview
             </Link>

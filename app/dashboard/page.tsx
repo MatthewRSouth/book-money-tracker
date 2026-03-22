@@ -7,6 +7,7 @@ import ClassTabs from '@/components/ClassTabs';
 import SummaryBar from '@/components/SummaryBar';
 import StudentTable from '@/components/StudentTable';
 import GlobalSearch from '@/components/GlobalSearch';
+import LogoutButton from '@/components/LogoutButton';
 
 interface DashboardPageProps {
   searchParams: Promise<{ tab?: string; highlight?: string }>;
@@ -110,6 +111,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <Link href="/rollover" className="text-muted hover:text-primary transition-colors">
                 Rollover
               </Link>
+              <LogoutButton />
             </div>
           </div>
         </div>

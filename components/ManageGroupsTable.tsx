@@ -47,45 +47,45 @@ export default function ManageGroupsTable({ groups, studentCounts }: ManageGroup
   return (
     <>
       {errorMsg && (
-        <div className="mb-4 px-4 py-2 bg-red-900/50 border border-red-700 rounded-lg text-sm text-red-300">
+        <div className="mb-4 px-4 py-2 bg-red-50 border border-red-300 rounded-lg text-sm text-red-600">
           {errorMsg}
         </div>
       )}
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden mb-4">
+      <div className="bg-card border border-border rounded-xl overflow-hidden mb-4">
         {groups.length === 0 ? (
-          <div className="py-12 text-center text-zinc-500 text-sm">
+          <div className="py-12 text-center text-muted text-sm">
             No groups yet. Add one to get started.
           </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-800 bg-zinc-800/50">
-                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">
+              <tr className="border-b border-border bg-background/70">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">
                   Group
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">
                   Students
                 </th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800">
+            <tbody className="divide-y divide-border">
               {groups.map((group) => (
-                <tr key={group.id} className="hover:bg-zinc-800/30 transition-colors">
-                  <td className="px-4 py-3 font-medium text-zinc-100">{group.name}</td>
-                  <td className="px-4 py-3 text-zinc-400">{studentCounts[group.id] ?? 0}</td>
+                <tr key={group.id} className="hover:bg-background transition-colors">
+                  <td className="px-4 py-3 font-medium text-foreground">{group.name}</td>
+                  <td className="px-4 py-3 text-muted">{studentCounts[group.id] ?? 0}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2 justify-end">
                       <button
                         onClick={() => setEditingGroup(group)}
-                        className="px-3 py-1 text-xs border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
+                        className="px-3 py-1 text-xs border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
                       >
                         Rename
                       </button>
                       <button
                         onClick={() => setDeletingGroup(group)}
-                        className="px-3 py-1 text-xs border border-red-900 rounded-lg text-red-400 hover:bg-red-900/30 transition-colors"
+                        className="px-3 py-1 text-xs border border-red-300 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
                       >
                         Delete
                       </button>
@@ -100,7 +100,7 @@ export default function ManageGroupsTable({ groups, studentCounts }: ManageGroup
 
       <button
         onClick={() => setShowAdd(true)}
-        className="px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-colors"
+        className="px-4 py-2 text-sm bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
       >
         + Add group
       </button>

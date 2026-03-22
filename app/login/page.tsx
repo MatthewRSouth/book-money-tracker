@@ -32,45 +32,45 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold text-zinc-100">Book Money Tracker</h1>
-          <p className="mt-1 text-sm text-zinc-400">Sign in to continue</p>
+          <h1 className="text-2xl font-semibold text-foreground">Book Money Tracker</h1>
+          <p className="mt-1 text-sm text-muted">Sign in to continue</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-1">Email</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+              className="w-full bg-card border border-border rounded-lg px-3 py-2 text-foreground placeholder-muted focus:outline-none focus:border-primary text-sm"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-1">Password</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 text-sm"
+              className="w-full bg-card border border-border rounded-lg px-3 py-2 text-foreground placeholder-muted focus:outline-none focus:border-primary text-sm"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-400">{error}</p>
+            <p className="text-sm text-red-500">{error}</p>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg py-2 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary hover:bg-primary-hover text-white font-medium rounded-lg py-2 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in…' : 'Sign in'}
           </button>

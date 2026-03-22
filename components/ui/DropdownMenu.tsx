@@ -82,7 +82,7 @@ export default function DropdownMenu({ items, trigger }: DropdownMenuProps) {
           e.stopPropagation();
           setOpen((o) => !o);
         }}
-        className={trigger ? '' : 'p-1 rounded text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors leading-none'}
+        className={trigger ? '' : 'p-1 rounded text-muted hover:text-foreground hover:bg-background transition-colors leading-none'}
       >
         {trigger ?? '⋯'}
       </button>
@@ -91,7 +91,7 @@ export default function DropdownMenu({ items, trigger }: DropdownMenuProps) {
         <div
           role="menu"
           style={getMenuPosition()}
-          className="absolute z-50 min-w-[140px] bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl py-1"
+          className="absolute z-50 min-w-[140px] bg-card border border-border rounded-lg shadow-xl py-1"
         >
           {items.map((item, i) => (
             <button
@@ -104,8 +104,8 @@ export default function DropdownMenu({ items, trigger }: DropdownMenuProps) {
                 setOpen(false);
                 item.onClick();
               }}
-              className={`w-full text-left px-3 py-1.5 text-sm hover:bg-zinc-700 transition-colors ${
-                item.destructive ? 'text-red-400' : 'text-zinc-200'
+              className={`w-full text-left px-3 py-1.5 text-sm hover:bg-background transition-colors ${
+                item.destructive ? 'text-red-600' : 'text-foreground'
               }`}
             >
               {item.label}

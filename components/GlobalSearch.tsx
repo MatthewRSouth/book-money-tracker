@@ -59,10 +59,10 @@ export default function GlobalSearch() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
           placeholder="Search students…"
-          className="w-48 sm:w-64 bg-zinc-800 border border-zinc-700 rounded px-3 py-1.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 transition-colors"
+          className="w-48 sm:w-64 bg-card border border-border rounded px-3 py-1.5 text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
         />
         {isPending && (
-          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400">
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-muted">
             <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
@@ -72,19 +72,19 @@ export default function GlobalSearch() {
       </div>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-72 bg-zinc-800 border border-zinc-700 rounded shadow-lg overflow-hidden">
+        <div className="absolute z-50 mt-1 w-72 bg-card border border-border rounded shadow-lg overflow-hidden">
           {results.length === 0 ? (
-            <p className="px-3 py-2 text-sm text-zinc-400">No students found.</p>
+            <p className="px-3 py-2 text-sm text-muted">No students found.</p>
           ) : (
             <ul>
               {results.map((r) => (
                 <li key={r.student_id}>
                   <button
-                    className="w-full text-left px-3 py-2 hover:bg-zinc-700 transition-colors"
+                    className="w-full text-left px-3 py-2 hover:bg-background transition-colors"
                     onClick={() => handleSelect(r)}
                   >
-                    <span className="text-sm text-zinc-100">{r.student_name}</span>
-                    <span className="ml-2 text-xs text-zinc-400">{r.group_name}</span>
+                    <span className="text-sm text-foreground">{r.student_name}</span>
+                    <span className="ml-2 text-xs text-muted">{r.group_name}</span>
                   </button>
                 </li>
               ))}

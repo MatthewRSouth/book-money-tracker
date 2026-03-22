@@ -30,8 +30,8 @@ export default async function ManagePage() {
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-screen-md mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-zinc-100">Manage groups</h1>
-        <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-teal-300 transition-colors">
+        <h1 className="text-xl font-semibold text-foreground">Manage groups</h1>
+        <Link href="/dashboard" className="text-sm text-muted hover:text-primary transition-colors">
           ← Dashboard
         </Link>
       </div>

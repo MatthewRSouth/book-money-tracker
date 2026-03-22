@@ -28,8 +28,8 @@ export default function ClassTabs({ groups, activeGroupId }: ClassTabsProps) {
             onClick={() => handleClick(group.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               isActive
-                ? 'bg-teal-700 text-white'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+                ? 'bg-primary text-white'
+                : 'text-muted hover:text-foreground hover:bg-border'
             }`}
           >
             {group.name}

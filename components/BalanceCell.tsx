@@ -18,7 +18,7 @@ export default function BalanceCell({ balance, flash, onClick }: BalanceCellProp
     }
   }, [flash]);
 
-  const colorClass = balance < 0 ? 'text-red-400' : 'text-green-400';
+  const colorClass = balance < 0 ? 'text-red-500' : 'text-green-600';
   const animClass =
     flash === 'up'
       ? 'animate-[flash-up_0.6s_ease-out]'

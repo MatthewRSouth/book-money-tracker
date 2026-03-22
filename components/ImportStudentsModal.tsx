@@ -125,21 +125,21 @@ export default function ImportStudentsModal({
     <Modal isOpen={isOpen} onClose={handleClose} title={`Import students into ${classGroupName}`}>
       {step === 'upload' && (
         <div className="space-y-4">
-          <p className="text-sm text-zinc-400">
-            Upload a <strong className="text-zinc-200">.csv</strong> or{' '}
-            <strong className="text-zinc-200">.xlsx</strong> file. Required column:{' '}
-            <code className="text-teal-400">name</code>. Optional column:{' '}
-            <code className="text-teal-400">balance</code> (or{' '}
-            <code className="text-teal-400">starting_balance</code>).
+          <p className="text-sm text-muted">
+            Upload a <strong className="text-foreground">.csv</strong> or{' '}
+            <strong className="text-foreground">.xlsx</strong> file. Required column:{' '}
+            <code className="text-primary">name</code>. Optional column:{' '}
+            <code className="text-primary">balance</code> (or{' '}
+            <code className="text-primary">starting_balance</code>).
           </p>
           <input
             ref={fileRef}
             type="file"
             accept=".csv,.xlsx,.xls"
             onChange={handleFileChange}
-            className="block w-full text-sm text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:border-zinc-600 file:text-sm file:bg-zinc-800 file:text-zinc-200 hover:file:bg-zinc-700 cursor-pointer"
+            className="block w-full text-sm text-muted file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:border-border file:text-sm file:bg-card file:text-foreground hover:file:bg-background cursor-pointer"
           />
-          {parseError && <p className="text-sm text-red-400">{parseError}</p>}
+          {parseError && <p className="text-sm text-red-500">{parseError}</p>}
         </div>
       )}
 
@@ -147,53 +147,53 @@ export default function ImportStudentsModal({
         <div className="space-y-4">
           {/* Default balance field */}
           <div className="flex items-center gap-3">
-            <label className="text-sm text-zinc-300 whitespace-nowrap">Default starting balance (¥)</label>
+            <label className="text-sm text-foreground whitespace-nowrap">Default starting balance (¥)</label>
             <input
               type="number"
               value={defaultBalance}
               onChange={(e) => setDefaultBalance(Number(e.target.value) || 0)}
-              className="w-32 bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-sm text-zinc-100 focus:outline-none focus:border-teal-500"
+              className="w-32 bg-card border border-border rounded px-2 py-1 text-sm text-foreground focus:outline-none focus:border-primary"
             />
-            <span className="text-xs text-zinc-500">applied to rows without a balance column</span>
+            <span className="text-xs text-muted">applied to rows without a balance column</span>
           </div>
 
           {/* Summary */}
-          <p className="text-sm text-zinc-400">
-            <span className="text-zinc-100 font-medium">{okRows.length}</span> student
+          <p className="text-sm text-muted">
+            <span className="text-foreground font-medium">{okRows.length}</span> student
             {okRows.length !== 1 ? 's' : ''} ready to import
             {skippedCount > 0 && (
-              <span className="text-zinc-500">, {skippedCount} row{skippedCount !== 1 ? 's' : ''} skipped (missing name)</span>
+              <span className="text-muted">, {skippedCount} row{skippedCount !== 1 ? 's' : ''} skipped (missing name)</span>
             )}
             .
           </p>
 
           {/* Preview table */}
-          <div className="max-h-64 overflow-y-auto rounded border border-zinc-700">
+          <div className="max-h-64 overflow-y-auto rounded border border-border">
             <table className="w-full text-sm">
-              <thead className="bg-zinc-800 sticky top-0">
+              <thead className="bg-background sticky top-0">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-zinc-400">Name</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-zinc-400">Balance</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-zinc-400">Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted">Name</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-muted">Balance</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-muted">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800">
+              <tbody className="divide-y divide-border">
                 {displayRows.map((row, i) => (
-                  <tr key={i} className="bg-zinc-900">
-                    <td className="px-3 py-1.5 text-zinc-200">{row.name || <span className="text-zinc-600 italic">—</span>}</td>
-                    <td className="px-3 py-1.5 text-right text-zinc-300">
+                  <tr key={i} className="bg-card">
+                    <td className="px-3 py-1.5 text-foreground">{row.name || <span className="text-muted italic">—</span>}</td>
+                    <td className="px-3 py-1.5 text-right text-foreground">
                       {row.status === 'ok' ? (
                         <>
                           ¥{row.balance_yen.toLocaleString('ja-JP')}
-                          {row.usesDefault && <span className="ml-1 text-zinc-500 text-xs">(default)</span>}
+                          {row.usesDefault && <span className="ml-1 text-muted text-xs">(default)</span>}
                         </>
                       ) : '—'}
                     </td>
                     <td className="px-3 py-1.5">
                       {row.status === 'ok' ? (
-                        <span className="text-teal-400 text-xs">OK</span>
+                        <span className="text-primary text-xs">OK</span>
                       ) : (
-                        <span className="text-red-400 text-xs">Missing name</span>
+                        <span className="text-red-500 text-xs">Missing name</span>
                       )}
                     </td>
                   </tr>
@@ -202,19 +202,19 @@ export default function ImportStudentsModal({
             </table>
           </div>
 
-          {errorMsg && <p className="text-sm text-red-400">{errorMsg}</p>}
+          {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
 
           <div className="flex gap-2 justify-end pt-1">
             <button
               onClick={() => { setStep('upload'); if (fileRef.current) fileRef.current.value = ''; }}
-              className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 transition-colors"
+              className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background transition-colors"
             >
               Back
             </button>
             <button
               onClick={handleConfirm}
               disabled={loading || okRows.length === 0}
-              className="px-4 py-1.5 text-sm rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 text-sm rounded-lg bg-primary hover:bg-primary-hover text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Importing…' : `Import ${okRows.length} student${okRows.length !== 1 ? 's' : ''}`}
             </button>

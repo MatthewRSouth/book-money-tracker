@@ -22,18 +22,18 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4"
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
       onClick={onClose}
     >
       <div
-        className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md shadow-xl"
+        className="bg-card border border-border rounded-xl w-full max-w-md shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
-          <h2 className="text-base font-semibold text-zinc-100">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <h2 className="text-base font-semibold text-foreground">{title}</h2>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-zinc-100 transition-colors text-xl leading-none"
+            className="text-muted hover:text-foreground transition-colors text-xl leading-none"
           >
             ×
           </button>

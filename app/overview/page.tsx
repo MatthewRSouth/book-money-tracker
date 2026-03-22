@@ -74,33 +74,33 @@ export default async function OverviewPage() {
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 max-w-screen-lg mx-auto">
+    <div className="min-h-screen p-4 sm:p-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-zinc-100">Overview</h1>
-        <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-teal-300 transition-colors">
+        <h1 className="text-xl font-semibold text-foreground">Overview</h1>
+        <Link href="/dashboard" className="text-sm text-muted hover:text-primary transition-colors">
           ← Dashboard
         </Link>
       </div>
 
       {/* Group summaries */}
       <section className="mb-8">
-        <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">Groups</h2>
+        <h2 className="text-xs font-medium text-muted uppercase tracking-wide mb-3">Groups</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {groupSummaries.map((g) => (
-            <div key={g.id} className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3">
-              <p className="font-medium text-zinc-100 mb-2">{g.name}</p>
+            <div key={g.id} className="bg-card border border-border rounded-xl px-4 py-3">
+              <p className="font-medium text-foreground mb-2">{g.name}</p>
               <div className="flex gap-4 text-sm">
                 <div>
-                  <p className="text-xs text-zinc-500">Students</p>
-                  <p className="text-zinc-200">{g.studentCount}</p>
+                  <p className="text-xs text-muted">Students</p>
+                  <p className="text-foreground">{g.studentCount}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-500">Books</p>
-                  <p className="text-zinc-200">{g.bookCount}</p>
+                  <p className="text-xs text-muted">Books</p>
+                  <p className="text-foreground">{g.bookCount}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-500">Total balance</p>
-                  <p className={g.totalBalance < 0 ? 'text-red-400' : 'text-zinc-200'}>
+                  <p className="text-xs text-muted">Total balance</p>
+                  <p className={g.totalBalance < 0 ? 'text-red-500' : 'text-foreground'}>
                     {formatYen(g.totalBalance)}
                   </p>
                 </div>
@@ -112,27 +112,27 @@ export default async function OverviewPage() {
 
       {/* Negative balances */}
       <section className="mb-8">
-        <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">
+        <h2 className="text-xs font-medium text-muted uppercase tracking-wide mb-3">
           Negative balances ({negativeBalances.length})
         </h2>
         {negativeBalances.length === 0 ? (
-          <p className="text-sm text-zinc-500">None — all balances are positive.</p>
+          <p className="text-sm text-muted">None — all balances are positive.</p>
         ) : (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-800 bg-zinc-800/50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Balance</th>
+                <tr className="border-b border-border bg-background/70">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Group</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800">
+              <tbody className="divide-y divide-border">
                 {negativeBalances.map((s) => (
                   <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-zinc-100">{s.name}</td>
-                    <td className="px-4 py-3 text-zinc-400">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className="px-4 py-3 text-red-400 font-medium">{formatYen(s.balance_yen)}</td>
+                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
+                    <td className="px-4 py-3 text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                    <td className="px-4 py-3 text-red-500 font-medium">{formatYen(s.balance_yen)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -143,27 +143,27 @@ export default async function OverviewPage() {
 
       {/* No books yet */}
       <section className="mb-8">
-        <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">
+        <h2 className="text-xs font-medium text-muted uppercase tracking-wide mb-3">
           No books distributed yet ({noBooks.length})
         </h2>
         {noBooks.length === 0 ? (
-          <p className="text-sm text-zinc-500">All students have received at least one book.</p>
+          <p className="text-sm text-muted">All students have received at least one book.</p>
         ) : (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-800 bg-zinc-800/50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Balance</th>
+                <tr className="border-b border-border bg-background/70">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Group</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800">
+              <tbody className="divide-y divide-border">
                 {noBooks.map((s) => (
                   <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-zinc-100">{s.name}</td>
-                    <td className="px-4 py-3 text-zinc-400">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className="px-4 py-3 text-zinc-300">{formatYen(s.balance_yen)}</td>
+                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
+                    <td className="px-4 py-3 text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                    <td className="px-4 py-3 text-foreground">{formatYen(s.balance_yen)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -174,27 +174,27 @@ export default async function OverviewPage() {
 
       {/* Fully distributed */}
       <section>
-        <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">
+        <h2 className="text-xs font-medium text-muted uppercase tracking-wide mb-3">
           All books distributed ({fullyDistributed.length})
         </h2>
         {fullyDistributed.length === 0 ? (
-          <p className="text-sm text-zinc-500">No students have received every book in their group yet.</p>
+          <p className="text-sm text-muted">No students have received every book in their group yet.</p>
         ) : (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-800 bg-zinc-800/50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide">Balance</th>
+                <tr className="border-b border-border bg-background/70">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Group</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800">
+              <tbody className="divide-y divide-border">
                 {fullyDistributed.map((s) => (
                   <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-zinc-100">{s.name}</td>
-                    <td className="px-4 py-3 text-zinc-400">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className={`px-4 py-3 font-medium ${s.balance_yen < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
+                    <td className="px-4 py-3 text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                    <td className={`px-4 py-3 font-medium ${s.balance_yen < 0 ? 'text-red-500' : 'text-green-600'}`}>
                       {formatYen(s.balance_yen)}
                     </td>
                   </tr>

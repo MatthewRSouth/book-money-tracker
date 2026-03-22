@@ -16,8 +16,8 @@ export default function BookCheckbox({ checked, disabled, onToggle }: BookCheckb
         role="checkbox"
         className={`w-5 h-5 rounded border-2 flex items-center justify-center mx-auto transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
           checked
-            ? 'bg-green-500 border-green-500'
-            : 'bg-transparent border-zinc-600 hover:border-zinc-400'
+            ? 'bg-primary border-primary'
+            : 'bg-transparent border-border hover:border-primary'
         }`}
       >
         {checked && (

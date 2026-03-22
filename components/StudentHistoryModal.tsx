@@ -39,26 +39,26 @@ export default function StudentHistoryModal({
     <Modal isOpen={isOpen} onClose={onClose} title={`History — ${student.name}`}>
       <div className="max-h-96 overflow-y-auto -mx-1 px-1">
         {loading && (
-          <p className="text-sm text-zinc-400 py-6 text-center">Loading…</p>
+          <p className="text-sm text-muted py-6 text-center">Loading…</p>
         )}
         {!loading && error && (
-          <p className="text-sm text-red-400 py-6 text-center">{error}</p>
+          <p className="text-sm text-red-500 py-6 text-center">{error}</p>
         )}
         {!loading && !error && entries.length === 0 && (
-          <p className="text-sm text-zinc-500 py-6 text-center">No history yet.</p>
+          <p className="text-sm text-muted py-6 text-center">No history yet.</p>
         )}
         {!loading && !error && entries.map((entry) => (
           <div
             key={entry.id}
-            className="flex items-start justify-between gap-4 py-2.5 border-b border-zinc-800 last:border-0"
+            className="flex items-start justify-between gap-4 py-2.5 border-b border-border last:border-0"
           >
             <div className="min-w-0">
-              <p className="text-sm text-zinc-100 truncate">{entry.label}</p>
-              <p className="text-xs text-zinc-500 mt-0.5">{entry.date}</p>
+              <p className="text-sm text-foreground truncate">{entry.label}</p>
+              <p className="text-xs text-muted mt-0.5">{entry.date}</p>
             </div>
             <span
               className={`text-sm font-medium tabular-nums shrink-0 ${
-                entry.type === 'payment' ? 'text-green-400' : 'text-red-400'
+                entry.type === 'payment' ? 'text-green-600' : 'text-red-500'
               }`}
             >
               {entry.type === 'payment' ? '+' : ''}{formatYen(entry.amount_yen)}

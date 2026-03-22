@@ -66,55 +66,55 @@ export default function EditStudentModal({
     <Modal isOpen={isOpen} onClose={handleClose} title="Edit student">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-zinc-300 mb-1">Name</label>
+          <label className="block text-sm font-medium text-foreground mb-1">Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
             autoFocus
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
+            className="w-full bg-card border border-border rounded-lg px-3 py-2 text-foreground placeholder-muted focus:outline-none focus:border-primary text-sm"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-zinc-300 mb-1">Balance (¥)</label>
+          <label className="block text-sm font-medium text-foreground mb-1">Balance (¥)</label>
           <input
             type="number"
             value={balance}
             onChange={(e) => setBalance(e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm"
+            className="w-full bg-card border border-border rounded-lg px-3 py-2 text-foreground placeholder-muted focus:outline-none focus:border-primary text-sm"
           />
-          <p className="mt-1 text-xs text-zinc-500">
+          <p className="mt-1 text-xs text-muted">
             Directly sets the balance without recording a payment. Use &quot;Record payment&quot; for incoming money.
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-zinc-300 mb-1">Notes</label>
+          <label className="block text-sm font-medium text-foreground mb-1">Notes</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-teal-500 text-sm resize-none"
+            className="w-full bg-card border border-border rounded-lg px-3 py-2 text-foreground placeholder-muted focus:outline-none focus:border-primary text-sm resize-none"
             placeholder="Optional notes about this student"
           />
         </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p className="text-sm text-red-500">{error}</p>}
 
         <div className="flex gap-3 pt-1">
           <button
             type="button"
             onClick={handleClose}
-            className="flex-1 px-4 py-2 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 transition-colors"
+            className="flex-1 px-4 py-2 text-sm border border-border rounded-lg text-muted hover:bg-background transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-4 py-2 text-sm bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 text-sm bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           >
             {loading ? 'Saving…' : 'Save'}
           </button>

@@ -31,7 +31,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   if (groupsError || !groups || groups.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-zinc-400">
+      <div className="min-h-screen flex items-center justify-center text-muted">
         No class groups found. Check your Supabase setup.
       </div>
     );
@@ -95,19 +95,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-semibold text-zinc-100">Book Money Tracker</h1>
+          <h1 className="text-xl font-semibold text-foreground">Book Money Tracker</h1>
           <div className="flex items-center gap-4">
             <Suspense>
               <GlobalSearch />
             </Suspense>
             <div className="flex gap-4 text-sm">
-              <Link href="/overview" className="text-zinc-400 hover:text-teal-300 transition-colors">
+              <Link href="/overview" className="text-muted hover:text-primary transition-colors">
                 Overview
               </Link>
-              <Link href="/manage" className="text-zinc-400 hover:text-teal-300 transition-colors">
+              <Link href="/manage" className="text-muted hover:text-primary transition-colors">
                 Manage groups
               </Link>
-              <Link href="/rollover" className="text-zinc-400 hover:text-teal-300 transition-colors">
+              <Link href="/rollover" className="text-muted hover:text-primary transition-colors">
                 Rollover
               </Link>
             </div>

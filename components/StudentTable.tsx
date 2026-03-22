@@ -208,18 +208,18 @@ export default function StudentTable({
   return (
     <>
       {errorMsg && (
-        <div className="mb-3 px-4 py-2 bg-red-900/50 border border-red-700 rounded-lg text-sm text-red-300">
+        <div className="mb-3 px-4 py-2 bg-red-50 border border-red-300 rounded-lg text-sm text-red-600">
           {errorMsg}
         </div>
       )}
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
         {/* Table header row with group name + buttons */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
-          <span className="text-sm font-medium text-zinc-300">{classGroupName}</span>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <span className="text-sm font-medium text-foreground">{classGroupName}</span>
           <div className="flex gap-2">
             <DropdownMenu
-              trigger={<span className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors cursor-pointer">Export ▾</span>}
+              trigger={<span className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors cursor-pointer">Export ▾</span>}
               items={[
                 { label: 'CSV', onClick: handleExportCSV },
                 { label: 'Excel (.xlsx)', onClick: handleExportXLSX },
@@ -227,19 +227,19 @@ export default function StudentTable({
             />
             <button
               onClick={() => setShowImport(true)}
-              className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
+              className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
             >
               Import
             </button>
             <button
               onClick={() => setShowAddBook(true)}
-              className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
+              className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
             >
               + Add book
             </button>
             <button
               onClick={() => setShowAddStudent(true)}
-              className="px-3 py-1.5 text-sm border border-zinc-700 rounded-lg text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
+              className="px-3 py-1.5 text-sm border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
             >
               + Add student
             </button>
@@ -247,31 +247,31 @@ export default function StudentTable({
         </div>
 
         {localStudents.length === 0 && books.length === 0 ? (
-          <div className="py-12 text-center text-zinc-500 text-sm">
+          <div className="py-12 text-center text-muted text-sm">
             No students or books yet. Add some to get started.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-800 bg-zinc-800/50">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide whitespace-nowrap">
+                <tr className="border-b border-border bg-background/70">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">
                     Student
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wide whitespace-nowrap">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">
                     Balance
                   </th>
                   {books.map((book, bookIndex) => (
                     <th
                       key={book.id}
-                      className="px-4 py-3 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide whitespace-nowrap relative"
+                      className="px-4 py-3 text-center text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap relative"
                     >
                       <div className="flex flex-col items-center gap-0.5">
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => handleMoveBook(book.id, 'up')}
                             disabled={bookIndex === 0 || !!movingBookId}
-                            className="p-0.5 text-zinc-500 hover:text-teal-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="p-0.5 text-muted hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                             aria-label="Move book left"
                           >
                             ◀
@@ -280,14 +280,14 @@ export default function StudentTable({
                           <button
                             onClick={() => handleMoveBook(book.id, 'down')}
                             disabled={bookIndex === books.length - 1 || !!movingBookId}
-                            className="p-0.5 text-zinc-500 hover:text-teal-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="p-0.5 text-muted hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                             aria-label="Move book right"
                           >
                             ▶
                           </button>
                           <button
                             onClick={() => setBulkBook(book)}
-                            className="p-0.5 text-zinc-500 hover:text-teal-300 transition-colors"
+                            className="p-0.5 text-muted hover:text-primary transition-colors"
                             title="Distribute to all"
                             aria-label="Distribute book to all students"
                           >
@@ -300,7 +300,7 @@ export default function StudentTable({
                             ]}
                           />
                         </div>
-                        <div className="text-zinc-500 normal-case font-normal">
+                        <div className="text-muted normal-case font-normal">
                           ¥{book.price_yen.toLocaleString('ja-JP')}
                         </div>
                       </div>
@@ -308,7 +308,7 @@ export default function StudentTable({
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800">
+              <tbody className="divide-y divide-border">
                 {localStudents.map((student) => (
                   <React.Fragment key={student.id}>
                     <tr
@@ -316,13 +316,13 @@ export default function StudentTable({
                         if (el) rowRefs.current.set(student.id, el);
                         else rowRefs.current.delete(student.id);
                       }}
-                      className={`hover:bg-zinc-800/30 transition-colors ${highlightedId === student.id ? 'ring-2 ring-inset ring-teal-400' : ''}`}
+                      className={`hover:bg-background transition-colors ${highlightedId === student.id ? 'ring-2 ring-inset ring-primary' : ''}`}
                     >
-                      <td className="px-4 py-3 font-medium text-zinc-100 whitespace-nowrap">
+                      <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">
                         <div className="flex items-center justify-between gap-2">
                           <button
                             onClick={() => setEditingStudent(student)}
-                            className="hover:text-teal-300 hover:underline text-left transition-colors"
+                            className="hover:text-primary hover:underline text-left transition-colors"
                           >
                             {student.name}
                           </button>
@@ -356,7 +356,7 @@ export default function StudentTable({
                     </tr>
                     {student.notes && (
                       <tr>
-                        <td colSpan={2 + books.length} className="px-4 pb-2 text-xs text-zinc-500 italic">
+                        <td colSpan={2 + books.length} className="px-4 pb-2 text-xs text-muted italic">
                           {student.notes}
                         </td>
                       </tr>

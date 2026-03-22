@@ -58,25 +58,17 @@ export default function ManageGroupsTable({ groups, studentCounts }: ManageGroup
             No groups yet. Add one to get started.
           </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-background/70">
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">
-                  Group
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">
-                  Students
-                </th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
+          <>
+            {/* Mobile card layout */}
+            <div className="sm:hidden divide-y divide-border">
               {groups.map((group) => (
-                <tr key={group.id} className="hover:bg-background transition-colors">
-                  <td className="px-4 py-3 font-medium text-foreground">{group.name}</td>
-                  <td className="px-4 py-3 text-muted">{studentCounts[group.id] ?? 0}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-2 justify-end">
+                <div key={group.id} className="px-4 py-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground truncate">{group.name}</p>
+                      <p className="text-xs text-muted mt-0.5">{studentCounts[group.id] ?? 0} students</p>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
                       <button
                         onClick={() => setEditingGroup(group)}
                         className="px-3 min-h-11 text-xs border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
@@ -90,11 +82,51 @@ export default function ManageGroupsTable({ groups, studentCounts }: ManageGroup
                         Delete
                       </button>
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+            {/* Desktop table layout */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-background/70">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">
+                      Group
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">
+                      Students
+                    </th>
+                    <th className="px-4 py-3" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {groups.map((group) => (
+                    <tr key={group.id} className="hover:bg-background transition-colors">
+                      <td className="px-4 py-3 font-medium text-foreground">{group.name}</td>
+                      <td className="px-4 py-3 text-muted">{studentCounts[group.id] ?? 0}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => setEditingGroup(group)}
+                            className="px-3 min-h-11 text-xs border border-border rounded-lg text-muted hover:bg-background hover:text-foreground transition-colors"
+                          >
+                            Rename
+                          </button>
+                          <button
+                            onClick={() => setDeletingGroup(group)}
+                            className="px-3 min-h-11 text-xs border border-red-300 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 

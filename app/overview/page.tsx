@@ -118,25 +118,40 @@ export default async function OverviewPage() {
         {negativeBalances.length === 0 ? (
           <p className="text-sm text-muted">None — all balances are positive.</p>
         ) : (
-          <div className="bg-card border border-border rounded-xl overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-background/70">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {negativeBalances.map((s) => (
-                  <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
-                    <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className="px-4 py-3 text-red-500 font-medium whitespace-nowrap">{formatYen(s.balance_yen)}</td>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            {/* Mobile cards */}
+            <div className="sm:hidden divide-y divide-border">
+              {negativeBalances.map((s) => (
+                <div key={s.id} className="px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-foreground truncate">{s.name}</p>
+                    <p className="text-xs text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</p>
+                  </div>
+                  <span className="text-red-500 font-medium text-sm shrink-0">{formatYen(s.balance_yen)}</span>
+                </div>
+              ))}
+            </div>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-background/70">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {negativeBalances.map((s) => (
+                    <tr key={s.id}>
+                      <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
+                      <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                      <td className="px-4 py-3 text-red-500 font-medium whitespace-nowrap">{formatYen(s.balance_yen)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>
@@ -149,25 +164,40 @@ export default async function OverviewPage() {
         {noBooks.length === 0 ? (
           <p className="text-sm text-muted">All students have received at least one book.</p>
         ) : (
-          <div className="bg-card border border-border rounded-xl overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-background/70">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {noBooks.map((s) => (
-                  <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
-                    <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className="px-4 py-3 text-foreground whitespace-nowrap">{formatYen(s.balance_yen)}</td>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            {/* Mobile cards */}
+            <div className="sm:hidden divide-y divide-border">
+              {noBooks.map((s) => (
+                <div key={s.id} className="px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-foreground truncate">{s.name}</p>
+                    <p className="text-xs text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</p>
+                  </div>
+                  <span className="text-foreground text-sm shrink-0">{formatYen(s.balance_yen)}</span>
+                </div>
+              ))}
+            </div>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-background/70">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {noBooks.map((s) => (
+                    <tr key={s.id}>
+                      <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
+                      <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                      <td className="px-4 py-3 text-foreground whitespace-nowrap">{formatYen(s.balance_yen)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>
@@ -180,27 +210,44 @@ export default async function OverviewPage() {
         {fullyDistributed.length === 0 ? (
           <p className="text-sm text-muted">No students have received every book in their group yet.</p>
         ) : (
-          <div className="bg-card border border-border rounded-xl overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-background/70">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {fullyDistributed.map((s) => (
-                  <tr key={s.id}>
-                    <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
-                    <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
-                    <td className={`px-4 py-3 font-medium whitespace-nowrap ${s.balance_yen < 0 ? 'text-red-500' : 'text-green-600'}`}>
-                      {formatYen(s.balance_yen)}
-                    </td>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            {/* Mobile cards */}
+            <div className="sm:hidden divide-y divide-border">
+              {fullyDistributed.map((s) => (
+                <div key={s.id} className="px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-foreground truncate">{s.name}</p>
+                    <p className="text-xs text-muted">{groupNameMap.get(s.class_group_id) ?? '—'}</p>
+                  </div>
+                  <span className={`font-medium text-sm shrink-0 ${s.balance_yen < 0 ? 'text-red-500' : 'text-green-600'}`}>
+                    {formatYen(s.balance_yen)}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-background/70">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Student</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Group</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap">Balance</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {fullyDistributed.map((s) => (
+                    <tr key={s.id}>
+                      <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{s.name}</td>
+                      <td className="px-4 py-3 text-muted whitespace-nowrap">{groupNameMap.get(s.class_group_id) ?? '—'}</td>
+                      <td className={`px-4 py-3 font-medium whitespace-nowrap ${s.balance_yen < 0 ? 'text-red-500' : 'text-green-600'}`}>
+                        {formatYen(s.balance_yen)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>

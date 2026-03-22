@@ -18,6 +18,7 @@ import BulkReceiveModal from './BulkReceiveModal';
 import { toggleBook } from '@/lib/actions/toggle';
 import { deleteStudent } from '@/lib/actions/students';
 import { deleteBook, moveBook } from '@/lib/actions/books';
+import { formatYen } from '@/lib/utils/formatYen';
 
 interface StudentTableProps {
   books: Book[];
@@ -47,7 +48,7 @@ export default function StudentTable({
   const [showAddBook, setShowAddBook] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const rowRefs = useRef<Map<string, HTMLTableRowElement>>(new Map());
+  const rowRefs = useRef<Map<string, HTMLElement>>(new Map());
 
   // Student edit/delete/payment state
   const [editingStudent, setEditingStudent] = useState<StudentRow | null>(null);
@@ -251,122 +252,202 @@ export default function StudentTable({
             No students or books yet. Add some to get started.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-background/70">
-                  <th className="sticky left-0 z-20 bg-card w-36 min-w-36 px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap border-r border-border">
-                    Student
-                  </th>
-                  <th className="sticky left-36 z-20 bg-card w-24 min-w-24 px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap border-r border-border">
-                    Balance
-                  </th>
-                  {books.map((book, bookIndex) => (
-                    <th
-                      key={book.id}
-                      className="px-4 py-3 text-center text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap relative"
-                    >
-                      <div className="flex flex-col items-center gap-0.5">
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => handleMoveBook(book.id, 'up')}
-                            disabled={bookIndex === 0 || !!movingBookId}
-                            className="p-0.5 text-muted hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                            aria-label="Move book left"
-                          >
-                            ◀
-                          </button>
-                          <span>{book.title}</span>
-                          <button
-                            onClick={() => handleMoveBook(book.id, 'down')}
-                            disabled={bookIndex === books.length - 1 || !!movingBookId}
-                            className="p-0.5 text-muted hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                            aria-label="Move book right"
-                          >
-                            ▶
-                          </button>
-                          <button
-                            onClick={() => setBulkBook(book)}
-                            className="p-0.5 text-muted hover:text-primary transition-colors"
-                            title="Distribute to all"
-                            aria-label="Distribute book to all students"
-                          >
-                            ⬇
-                          </button>
-                          <DropdownMenu
-                            items={[
-                              { label: 'Edit book', onClick: () => setEditingBook(book) },
-                              { label: 'Delete book', onClick: () => setDeletingBook(book), destructive: true },
-                            ]}
-                          />
-                        </div>
-                        <div className="text-muted normal-case font-normal">
-                          ¥{book.price_yen.toLocaleString('ja-JP')}
-                        </div>
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {localStudents.map((student) => (
-                  <React.Fragment key={student.id}>
-                    <tr
-                      ref={(el) => {
-                        if (el) rowRefs.current.set(student.id, el);
-                        else rowRefs.current.delete(student.id);
-                      }}
-                      className={`hover:bg-background transition-colors ${highlightedId === student.id ? 'ring-2 ring-inset ring-primary' : ''}`}
-                    >
-                      <td className="sticky left-0 z-10 bg-card w-36 min-w-36 px-4 py-3 font-medium text-foreground whitespace-nowrap border-r border-border">
-                        <div className="flex items-center justify-between gap-2">
-                          <button
-                            onClick={() => setEditingStudent(student)}
-                            className="hover:text-primary hover:underline text-left transition-colors"
-                          >
-                            {student.name}
-                          </button>
-                          <DropdownMenu
-                            items={[
-                              { label: 'Record payment', onClick: () => setPayingStudent(student) },
-                              { label: 'Delete', onClick: () => setDeletingStudent(student), destructive: true },
-                            ]}
-                          />
-                        </div>
-                      </td>
-                      <BalanceCell
-                        balance={student.balance_yen}
-                        flash={flashState[student.id] ?? null}
-                        onClick={() => setHistoryStudent(student)}
-                        className="sticky left-36 z-10 bg-card w-24 min-w-24 border-r border-border"
+          <>
+            {/* Mobile card layout — visible below sm */}
+            <div className="sm:hidden divide-y divide-border">
+              {localStudents.map((student) => {
+                const balanceColor = student.balance_yen < 0 ? 'text-red-500' : 'text-green-600';
+                return (
+                  <div
+                    key={student.id}
+                    ref={(el) => {
+                      if (el) rowRefs.current.set(student.id, el);
+                      else rowRefs.current.delete(student.id);
+                    }}
+                    className={`p-4 transition-colors ${highlightedId === student.id ? 'ring-2 ring-inset ring-primary' : ''}`}
+                  >
+                    {/* Name + menu */}
+                    <div className="flex items-center justify-between mb-1">
+                      <button
+                        onClick={() => setEditingStudent(student)}
+                        className="font-semibold text-foreground hover:text-primary text-base transition-colors text-left"
+                      >
+                        {student.name}
+                      </button>
+                      <DropdownMenu
+                        items={[
+                          { label: 'Record payment', onClick: () => setPayingStudent(student) },
+                          { label: 'Delete', onClick: () => setDeletingStudent(student), destructive: true },
+                        ]}
                       />
-                      {books.map((book) => {
-                        const checked = student.received_book_ids.has(book.id);
-                        const pendingKey = `${student.id}:${book.id}`;
-                        return (
-                          <BookCheckbox
-                            key={book.id}
-                            checked={checked}
-                            disabled={pending.has(pendingKey)}
-                            onToggle={() =>
-                              handleToggle(student.id, book.id, book.price_yen, checked)
-                            }
-                          />
-                        );
-                      })}
-                    </tr>
+                    </div>
+
                     {student.notes && (
-                      <tr>
-                        <td colSpan={2 + books.length} className="px-4 pb-2 text-xs text-muted italic">
-                          {student.notes}
-                        </td>
-                      </tr>
+                      <p className="text-xs text-muted italic mb-2">{student.notes}</p>
                     )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+
+                    {/* Balance */}
+                    <div
+                      className="flex items-center justify-between py-2.5 border-t border-border cursor-pointer"
+                      onClick={() => setHistoryStudent(student)}
+                    >
+                      <span className="text-sm text-muted">Balance</span>
+                      <span className={`font-medium text-sm ${balanceColor}`}>
+                        {formatYen(student.balance_yen)}
+                      </span>
+                    </div>
+
+                    {/* Books */}
+                    {books.map((book) => {
+                      const checked = student.received_book_ids.has(book.id);
+                      const pendingKey = `${student.id}:${book.id}`;
+                      return (
+                        <div key={book.id} className="flex items-center justify-between py-2.5 border-t border-border">
+                          <div className="flex-1 min-w-0 pr-3">
+                            <span className="text-sm text-foreground block truncate">{book.title}</span>
+                            <span className="text-xs text-muted">¥{book.price_yen.toLocaleString('ja-JP')}</span>
+                          </div>
+                          <button
+                            onClick={() => handleToggle(student.id, book.id, book.price_yen, checked)}
+                            disabled={pending.has(pendingKey)}
+                            aria-checked={checked}
+                            role="checkbox"
+                            className={`w-7 h-7 rounded border-2 flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0 ${
+                              checked ? 'bg-primary border-primary' : 'bg-transparent border-border hover:border-primary'
+                            }`}
+                          >
+                            {checked && (
+                              <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2 6l3 3 5-5" />
+                              </svg>
+                            )}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop table layout — visible on sm+ */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-background/70">
+                    <th className="sticky left-0 z-20 bg-card w-36 min-w-36 px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap border-r border-border">
+                      Student
+                    </th>
+                    <th className="sticky left-36 z-20 bg-card w-24 min-w-24 px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap border-r border-border">
+                      Balance
+                    </th>
+                    {books.map((book, bookIndex) => (
+                      <th
+                        key={book.id}
+                        className="px-4 py-3 text-center text-xs font-medium text-muted uppercase tracking-wide whitespace-nowrap relative"
+                      >
+                        <div className="flex flex-col items-center gap-0.5">
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleMoveBook(book.id, 'up')}
+                              disabled={bookIndex === 0 || !!movingBookId}
+                              className="p-0.5 text-muted hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              aria-label="Move book left"
+                            >
+                              ◀
+                            </button>
+                            <span>{book.title}</span>
+                            <button
+                              onClick={() => handleMoveBook(book.id, 'down')}
+                              disabled={bookIndex === books.length - 1 || !!movingBookId}
+                              className="p-0.5 text-muted hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              aria-label="Move book right"
+                            >
+                              ▶
+                            </button>
+                            <button
+                              onClick={() => setBulkBook(book)}
+                              className="p-0.5 text-muted hover:text-primary transition-colors"
+                              title="Distribute to all"
+                              aria-label="Distribute book to all students"
+                            >
+                              ⬇
+                            </button>
+                            <DropdownMenu
+                              items={[
+                                { label: 'Edit book', onClick: () => setEditingBook(book) },
+                                { label: 'Delete book', onClick: () => setDeletingBook(book), destructive: true },
+                              ]}
+                            />
+                          </div>
+                          <div className="text-muted normal-case font-normal">
+                            ¥{book.price_yen.toLocaleString('ja-JP')}
+                          </div>
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {localStudents.map((student) => (
+                    <React.Fragment key={student.id}>
+                      <tr
+                        ref={(el) => {
+                          if (el) rowRefs.current.set(student.id, el);
+                          else rowRefs.current.delete(student.id);
+                        }}
+                        className={`hover:bg-background transition-colors ${highlightedId === student.id ? 'ring-2 ring-inset ring-primary' : ''}`}
+                      >
+                        <td className="sticky left-0 z-10 bg-card w-36 min-w-36 px-4 py-3 font-medium text-foreground whitespace-nowrap border-r border-border">
+                          <div className="flex items-center justify-between gap-2">
+                            <button
+                              onClick={() => setEditingStudent(student)}
+                              className="hover:text-primary hover:underline text-left transition-colors"
+                            >
+                              {student.name}
+                            </button>
+                            <DropdownMenu
+                              items={[
+                                { label: 'Record payment', onClick: () => setPayingStudent(student) },
+                                { label: 'Delete', onClick: () => setDeletingStudent(student), destructive: true },
+                              ]}
+                            />
+                          </div>
+                        </td>
+                        <BalanceCell
+                          balance={student.balance_yen}
+                          flash={flashState[student.id] ?? null}
+                          onClick={() => setHistoryStudent(student)}
+                          className="sticky left-36 z-10 bg-card w-24 min-w-24 border-r border-border"
+                        />
+                        {books.map((book) => {
+                          const checked = student.received_book_ids.has(book.id);
+                          const pendingKey = `${student.id}:${book.id}`;
+                          return (
+                            <BookCheckbox
+                              key={book.id}
+                              checked={checked}
+                              disabled={pending.has(pendingKey)}
+                              onToggle={() =>
+                                handleToggle(student.id, book.id, book.price_yen, checked)
+                              }
+                            />
+                          );
+                        })}
+                      </tr>
+                      {student.notes && (
+                        <tr>
+                          <td colSpan={2 + books.length} className="px-4 pb-2 text-xs text-muted italic">
+                            {student.notes}
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 

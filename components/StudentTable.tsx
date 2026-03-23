@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useTransition } from 'react';
+import React, { useState, useEffect, useRef, useTransition, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Book, StudentRow } from '@/types';
 import BookCheckbox from './BookCheckbox';
@@ -61,6 +61,20 @@ export default function StudentTable({
   const [showImport, setShowImport] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const rowRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const flashTimeoutsRef = useRef(new Set<ReturnType<typeof setTimeout>>());
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear all pending timeouts when the component unmounts
+  useEffect(() => () => {
+    flashTimeoutsRef.current.forEach(clearTimeout);
+    if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+  }, []);
+
+  const showError = useCallback((msg: string) => {
+    setErrorMsg(msg);
+    if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+    errorTimeoutRef.current = setTimeout(() => setErrorMsg(''), 4000);
+  }, []);
 
   // Student edit/delete/payment state
   const [editingStudent, setEditingStudent] = useState<StudentRow | null>(null);
@@ -121,14 +135,17 @@ export default function StudentTable({
       })
     );
     setFlashState((f) => ({ ...f, [studentId]: receiving ? 'down' : 'up' }));
-    setTimeout(() => setFlashState((f) => ({ ...f, [studentId]: null })), 700);
+    const tid = setTimeout(() => {
+      setFlashState((f) => ({ ...f, [studentId]: null }));
+      flashTimeoutsRef.current.delete(tid);
+    }, 700);
+    flashTimeoutsRef.current.add(tid);
 
     const { error } = await toggleBook(studentId, bookId, receiving);
 
     if (error) {
       setLocalStudents(initialStudents);
-      setErrorMsg('Failed to update. Please try again.');
-      setTimeout(() => setErrorMsg(''), 4000);
+      showError('Failed to update. Please try again.');
     }
 
     setPending((p) => {
@@ -185,8 +202,7 @@ export default function StudentTable({
     const { error } = await deleteStudent(deletingStudent.id);
     setDeleteStudentLoading(false);
     if (error) {
-      setErrorMsg('Failed to delete student. Please try again.');
-      setTimeout(() => setErrorMsg(''), 4000);
+      showError('Failed to delete student. Please try again.');
     }
     setDeletingStudent(null);
     refresh();
@@ -198,8 +214,7 @@ export default function StudentTable({
     const { error } = await moveBook(bookId, direction, classGroupId);
     setMovingBookId(null);
     if (error) {
-      setErrorMsg('Failed to reorder book. Please try again.');
-      setTimeout(() => setErrorMsg(''), 4000);
+      showError('Failed to reorder book. Please try again.');
     } else {
       refresh();
     }
@@ -211,8 +226,7 @@ export default function StudentTable({
     const { error } = await deleteBook(deletingBook.id);
     setDeleteBookLoading(false);
     if (error) {
-      setErrorMsg('Failed to delete book. Please try again.');
-      setTimeout(() => setErrorMsg(''), 4000);
+      showError('Failed to delete book. Please try again.');
     }
     setDeletingBook(null);
     refresh();

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { formatYen } from '@/lib/utils/formatYen';
 
 interface BalanceCellProps {
@@ -11,14 +10,6 @@ interface BalanceCellProps {
 }
 
 export default function BalanceCell({ balance, flash, onClick, className }: BalanceCellProps) {
-  const [animKey, setAnimKey] = useState(0);
-
-  useEffect(() => {
-    if (flash) {
-      setAnimKey((k) => k + 1);
-    }
-  }, [flash]);
-
   const colorClass = balance < 0 ? 'text-red-500' : 'text-green-600';
   const animClass =
     flash === 'up'
@@ -33,7 +24,7 @@ export default function BalanceCell({ balance, flash, onClick, className }: Bala
       onClick={onClick}
     >
       <span
-        key={animKey}
+        key={flash ? `${balance}-${flash}` : balance}
         className={`inline-block px-2 py-0.5 rounded font-medium text-sm ${colorClass} ${animClass}`}
       >
         {formatYen(balance)}

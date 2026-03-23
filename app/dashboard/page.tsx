@@ -36,8 +36,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     );
   }
 
-  // Fetch books, students, and received-book records for every group in parallel.
-  // This runs all queries concurrently so tab switches are instant after load.
+  // Fetch books and students (with their received books) for every group in parallel.
+  // student_books are loaded via a relational select so each group needs only 2 queries
+  // instead of 3 (eliminates the sequential student_books fetch after students load).
   const allGroupData: GroupData[] = await Promise.all(
     groups.map(async (group: ClassGroup) => {
       const [booksResult, studentsResult] = await Promise.all([
@@ -48,34 +49,28 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           .order('sort_order'),
         supabase
           .from('students')
-          .select('id, class_group_id, name, balance_yen, notes')
+          .select('id, class_group_id, name, balance_yen, notes, student_books(book_id)')
           .eq('class_group_id', group.id)
           .order('created_at'),
       ]);
 
       const books: Book[] = booksResult.data ?? [];
-      const rawStudents = studentsResult.data ?? [];
-
-      let receivedData: { student_id: string; book_id: string }[] = [];
-      if (rawStudents.length > 0) {
-        const { data } = await supabase
-          .from('student_books')
-          .select('student_id, book_id')
-          .in('student_id', rawStudents.map((s) => s.id));
-        receivedData = data ?? [];
-      }
-
-      const receivedMap = new Map<string, Set<string>>();
-      for (const row of receivedData) {
-        if (!receivedMap.has(row.student_id)) {
-          receivedMap.set(row.student_id, new Set());
-        }
-        receivedMap.get(row.student_id)!.add(row.book_id);
-      }
+      const rawStudents = (studentsResult.data ?? []) as Array<{
+        id: string;
+        class_group_id: string;
+        name: string;
+        balance_yen: number;
+        notes: string | null;
+        student_books: { book_id: string }[];
+      }>;
 
       const students: StudentRow[] = rawStudents.map((s) => ({
-        ...s,
-        received_book_ids: receivedMap.get(s.id) ?? new Set(),
+        id: s.id,
+        class_group_id: s.class_group_id,
+        name: s.name,
+        balance_yen: s.balance_yen,
+        notes: s.notes,
+        received_book_ids: new Set(s.student_books.map((sb) => sb.book_id)),
       }));
 
       return { group, books, students };

@@ -56,6 +56,9 @@ export default function StudentTable({
   const [flashState, setFlashState] = useState<FlashState>({});
   const [highlightedId, setHighlightedId] = useState<string | undefined>(highlightStudentId);
   const [pending, setPending] = useState<Set<string>>(new Set());
+  // Ref-backed set for the guard check so rapid clicks see the current state
+  // without relying on the stale closure value of `pending`.
+  const pendingKeys = useRef(new Set<string>());
   const [showAddStudent, setShowAddStudent] = useState(false);
   const [showAddBook, setShowAddBook] = useState(false);
   const [showImport, setShowImport] = useState(false);
@@ -115,9 +118,9 @@ export default function StudentTable({
     const receiving = !currentlyChecked;
     const pendingKey = `${studentId}:${bookId}`;
 
-    if (pending.has(pendingKey)) return;
-
-    setPending((p) => new Set(p).add(pendingKey));
+    if (pendingKeys.current.has(pendingKey)) return;
+    pendingKeys.current.add(pendingKey);
+    setPending(new Set(pendingKeys.current));
     setLocalStudents((prev) =>
       prev.map((s) => {
         if (s.id !== studentId) return s;
@@ -148,11 +151,8 @@ export default function StudentTable({
       showError('Failed to update. Please try again.');
     }
 
-    setPending((p) => {
-      const next = new Set(p);
-      next.delete(pendingKey);
-      return next;
-    });
+    pendingKeys.current.delete(pendingKey);
+    setPending(new Set(pendingKeys.current));
   }
 
   function refresh() {

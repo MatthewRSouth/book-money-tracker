@@ -78,6 +78,7 @@ export default function DashboardClient({
         students={activeData.students}
         classGroupId={activeGroup.id}
         classGroupName={activeGroup.name}
+        allGroups={groups}
         highlightStudentId={highlightStudentId}
         onStudentsChange={handleStudentsChange}
       />

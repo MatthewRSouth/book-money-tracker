@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useTransition, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Book, StudentRow } from '@/types';
+import type { Book, ClassGroup, StudentRow } from '@/types';
 import BookCheckbox from './BookCheckbox';
 import BalanceCell from './BalanceCell';
 import AddStudentModal from './AddStudentModal';
@@ -15,6 +15,7 @@ import ConfirmDialog from './ui/ConfirmDialog';
 import StudentHistoryModal from './StudentHistoryModal';
 import ImportStudentsModal from './ImportStudentsModal';
 import BulkReceiveModal from './BulkReceiveModal';
+import MoveStudentModal from './MoveStudentModal';
 import { toggleBook } from '@/lib/actions/toggle';
 import { deleteStudent } from '@/lib/actions/students';
 import { deleteBook, moveBook } from '@/lib/actions/books';
@@ -25,6 +26,7 @@ interface StudentTableProps {
   students: StudentRow[];
   classGroupId: string;
   classGroupName: string;
+  allGroups: ClassGroup[];
   highlightStudentId?: string;
   onStudentsChange: (students: StudentRow[]) => void;
 }
@@ -36,6 +38,7 @@ export default function StudentTable({
   students: initialStudents,
   classGroupId,
   classGroupName,
+  allGroups,
   highlightStudentId,
   onStudentsChange,
 }: StudentTableProps) {
@@ -79,10 +82,11 @@ export default function StudentTable({
     errorTimeoutRef.current = setTimeout(() => setErrorMsg(''), 4000);
   }, []);
 
-  // Student edit/delete/payment state
+  // Student edit/delete/payment/move state
   const [editingStudent, setEditingStudent] = useState<StudentRow | null>(null);
   const [deletingStudent, setDeletingStudent] = useState<StudentRow | null>(null);
   const [payingStudent, setPayingStudent] = useState<StudentRow | null>(null);
+  const [movingStudent, setMovingStudent] = useState<StudentRow | null>(null);
   const [deleteStudentLoading, setDeleteStudentLoading] = useState(false);
 
   // Book edit/delete/reorder state
@@ -303,6 +307,7 @@ export default function StudentTable({
                       <DropdownMenu
                         items={[
                           { label: 'Record payment', onClick: () => setPayingStudent(student) },
+                          { label: 'Move to group', onClick: () => setMovingStudent(student) },
                           { label: 'Delete', onClick: () => setDeletingStudent(student), destructive: true },
                         ]}
                       />
@@ -435,6 +440,7 @@ export default function StudentTable({
                             <DropdownMenu
                               items={[
                                 { label: 'Record payment', onClick: () => setPayingStudent(student) },
+                                { label: 'Move to group', onClick: () => setMovingStudent(student) },
                                 { label: 'Delete', onClick: () => setDeletingStudent(student), destructive: true },
                               ]}
                             />
@@ -532,6 +538,17 @@ export default function StudentTable({
           onClose={() => setEditingStudent(null)}
           student={editingStudent}
           onSuccess={() => { setEditingStudent(null); refresh(); }}
+        />
+      )}
+
+      {movingStudent && (
+        <MoveStudentModal
+          isOpen={true}
+          onClose={() => setMovingStudent(null)}
+          student={movingStudent}
+          currentGroupId={classGroupId}
+          allGroups={allGroups}
+          onSuccess={() => { setMovingStudent(null); refresh(); }}
         />
       )}
 

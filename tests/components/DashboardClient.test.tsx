@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
 
 // Stub out server actions imported by StudentTable
 vi.mock('@/lib/actions/toggle', () => ({ toggleBook: vi.fn() }));
-vi.mock('@/lib/actions/students', () => ({ deleteStudent: vi.fn() }));
+vi.mock('@/lib/actions/students', () => ({ deleteStudent: vi.fn(), moveStudentToGroup: vi.fn() }));
 vi.mock('@/lib/actions/books', () => ({ deleteBook: vi.fn(), moveBook: vi.fn() }));
 
 const makeGroup = (id: string, name: string): GroupData => ({
@@ -49,7 +49,8 @@ describe('DashboardClient', () => {
         initialGroupId="g1"
       />
     );
-    expect(screen.getByText('Student of Class A')).toBeInTheDocument();
+    // Both mobile and desktop layouts render in jsdom — use getAllByText
+    expect(screen.getAllByText('Student of Class A').length).toBeGreaterThan(0);
   });
 
   it('renders all group tabs', () => {
@@ -72,15 +73,15 @@ describe('DashboardClient', () => {
       />
     );
 
-    // Initially shows Class A student
-    expect(screen.getByText('Student of Class A')).toBeInTheDocument();
+    // Initially shows Class A student (both mobile and desktop layouts render in jsdom)
+    expect(screen.getAllByText('Student of Class A').length).toBeGreaterThan(0);
 
     // Click Class B tab
     await user.click(screen.getByRole('button', { name: 'Class B' }));
 
     // Class B student appears immediately — no async wait needed (instant state switch)
-    expect(screen.getByText('Student of Class B')).toBeInTheDocument();
-    expect(screen.queryByText('Student of Class A')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Student of Class B').length).toBeGreaterThan(0);
+    expect(screen.queryAllByText('Student of Class A').length).toBe(0);
   });
 
   it('updates the URL via replaceState when switching tabs', async () => {
@@ -146,7 +147,7 @@ describe('DashboardClient', () => {
         initialGroupId="g1"
       />
     );
-    // SummaryBar renders the student count
-    expect(screen.getByText('1')).toBeInTheDocument();
+    // SummaryBar renders "1" for student count; "1" also appears in "0 / 1" fully-paid-out
+    expect(screen.getAllByText('1').length).toBeGreaterThan(0);
   });
 });

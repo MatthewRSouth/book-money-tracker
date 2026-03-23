@@ -40,3 +40,20 @@ export async function deleteGroup(groupId: string): Promise<{ error: string | nu
   revalidatePath('/manage');
   return { error: null };
 }
+
+export async function reorderGroups(
+  orderedIds: string[]
+): Promise<{ error: string | null }> {
+  if (orderedIds.length === 0) return { error: null };
+  const supabase = await createClient();
+  const results = await Promise.all(
+    orderedIds.map((id, index) =>
+      supabase.from('class_groups').update({ sort_order: index + 1 }).eq('id', id)
+    )
+  );
+  const failed = results.find((r) => r.error);
+  if (failed?.error) return { error: failed.error.message };
+  revalidatePath('/dashboard');
+  revalidatePath('/manage');
+  return { error: null };
+}

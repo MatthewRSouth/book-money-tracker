@@ -48,3 +48,17 @@ export async function deleteStudent(
   revalidatePath('/dashboard');
   return { error: null };
 }
+
+export async function moveStudentToGroup(
+  studentId: string,
+  newGroupId: string
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('move_student_to_group', {
+    p_student_id: studentId,
+    p_new_group_id: newGroupId,
+  });
+  if (error) return { error: error.message };
+  revalidatePath('/dashboard');
+  return { error: null };
+}

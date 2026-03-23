@@ -83,53 +83,42 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <div className="min-h-screen p-4 sm:p-6 max-w-screen-2xl mx-auto">
-      {/* Static header — renders immediately, no data dependency */}
-      <div className="mb-6 sm:mb-4 space-y-4 sm:space-y-0">
-        {/* Row 1: title + actions */}
-        <div className="relative flex items-center justify-center sm:justify-between gap-2">
-          <h1 className="text-xl font-semibold text-foreground text-center sm:text-left">Book Money Tracker</h1>
-          {/* Desktop: search + nav all in one row */}
-          <div className="hidden sm:flex items-center gap-4">
-            <Suspense>
-              <GlobalSearch />
-            </Suspense>
-            <div className="flex gap-4 text-sm">
-              <Link href="/overview" className="text-muted hover:text-primary transition-colors">
-                Overview
-              </Link>
-              <Link href="/manage" className="text-muted hover:text-primary transition-colors">
-                Manage groups
-              </Link>
-              <Link href="/rollover" className="text-muted hover:text-primary transition-colors">
-                Rollover
-              </Link>
-              <LogoutButton />
-            </div>
-          </div>
-          {/* Mobile: logout pinned to the right */}
-          <div className="sm:hidden absolute right-0">
+      {/* Static header — renders immediately, no data dependency.
+          Uses flex-wrap + order so GlobalSearch is mounted once and
+          reflows between the title row (desktop) and its own row (mobile). */}
+      <div className="mb-6 sm:mb-4 flex flex-wrap items-center sm:flex-nowrap">
+        {/* Title — flex-1 pushes the mobile logout to the far right */}
+        <h1 className="order-1 flex-1 sm:flex-none text-xl font-semibold text-foreground text-center sm:text-left">
+          Book Money Tracker
+        </h1>
+
+        {/* Mobile logout — sits in the same order-1 row as the title */}
+        <div className="order-1 sm:hidden">
+          <LogoutButton />
+        </div>
+
+        {/* Search — full-width row on mobile (order-3), inline on desktop (order-2) */}
+        <div className="order-3 sm:order-2 w-full px-8 mt-4 sm:w-auto sm:px-0 sm:mt-0 sm:ml-auto">
+          <Suspense fallback={<div className="w-full sm:w-48 lg:w-64 h-8 rounded border border-border bg-card" />}>
+            <GlobalSearch />
+          </Suspense>
+        </div>
+
+        {/* Nav — full-width row on mobile (order-4), inline on desktop (order-3) */}
+        <nav className="order-4 sm:order-3 w-full mt-4 sm:w-auto sm:mt-0 sm:ml-4 flex justify-around sm:justify-end sm:gap-4 text-sm items-center">
+          <Link href="/overview" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
+            Overview
+          </Link>
+          <Link href="/manage" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
+            Manage groups
+          </Link>
+          <Link href="/rollover" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
+            Rollover
+          </Link>
+          <div className="hidden sm:block">
             <LogoutButton />
           </div>
-        </div>
-        {/* Mobile-only rows: search + nav */}
-        <div className="sm:hidden space-y-4">
-          <div className="mx-8">
-            <Suspense>
-              <GlobalSearch />
-            </Suspense>
-          </div>
-          <nav className="flex justify-around text-sm">
-            <Link href="/overview" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
-              Overview
-            </Link>
-            <Link href="/manage" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
-              Manage groups
-            </Link>
-            <Link href="/rollover" className="text-muted hover:text-primary transition-colors whitespace-nowrap">
-              Rollover
-            </Link>
-          </nav>
-        </div>
+        </nav>
       </div>
 
       {/* All tab data is pre-loaded; switching is a pure client-side state change */}

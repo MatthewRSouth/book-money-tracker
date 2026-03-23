@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { GroupData, StudentRow } from '@/types';
 import ClassTabs from '@/components/ClassTabs';
 import SummaryBar from '@/components/SummaryBar';
@@ -31,7 +31,7 @@ export default function DashboardClient({
     setLocalStudentsMap(Object.fromEntries(allGroupData.map((gd) => [gd.group.id, gd.students])));
   }, [initialGroupId, allGroupData]);
 
-  const groups = allGroupData.map((gd) => gd.group);
+  const groups = useMemo(() => allGroupData.map((gd) => gd.group), [allGroupData]);
   const activeData =
     allGroupData.find((gd) => gd.group.id === activeGroupId) ?? allGroupData[0];
 
@@ -39,10 +39,12 @@ export default function DashboardClient({
 
   // Use optimistic local students for the summary so it reflects toggles immediately.
   const summaryStudents = localStudentsMap[activeGroupId] ?? activeData.students;
-  const totalBalance = summaryStudents.reduce((sum, s) => sum + s.balance_yen, 0);
-  const fullyPaidOut = summaryStudents.filter(
-    (s) => books.length > 0 && books.every((b) => s.received_book_ids.has(b.id))
-  ).length;
+  const { totalBalance, fullyPaidOut } = useMemo(() => ({
+    totalBalance: summaryStudents.reduce((sum, s) => sum + s.balance_yen, 0),
+    fullyPaidOut: books.length > 0
+      ? summaryStudents.filter((s) => books.every((b) => s.received_book_ids.has(b.id))).length
+      : 0,
+  }), [summaryStudents, books]);
 
   function handleTabClick(groupId: string) {
     setActiveGroupId(groupId);
@@ -50,6 +52,10 @@ export default function DashboardClient({
     params.set('tab', groupId);
     window.history.replaceState(null, '', `?${params.toString()}`);
   }
+
+  const handleStudentsChange = useCallback((updated: StudentRow[]) => {
+    setLocalStudentsMap((prev) => ({ ...prev, [activeGroupId]: updated }));
+  }, [activeGroupId]);
 
   return (
     <>
@@ -73,9 +79,7 @@ export default function DashboardClient({
         classGroupId={activeGroup.id}
         classGroupName={activeGroup.name}
         highlightStudentId={highlightStudentId}
-        onStudentsChange={(updated) =>
-          setLocalStudentsMap((prev) => ({ ...prev, [activeGroupId]: updated }))
-        }
+        onStudentsChange={handleStudentsChange}
       />
     </>
   );

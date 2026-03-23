@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geist.variable} h-full`}>
+    <html lang="ja" className={`${geist.variable} h-full`}>
       <body className="min-h-full bg-background text-foreground antialiased font-(family-name:--font-geist)">
         {children}
       </body>

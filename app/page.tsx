@@ -1,15 +1,8 @@
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
 
-export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (session) {
-    redirect('/dashboard');
-  } else {
-    redirect('/login');
-  }
+// Auth is enforced in proxy.ts (middleware): unauthenticated requests to `/`
+// are redirected to /login before this runs, so authenticated users can be
+// sent straight to the dashboard without a second session round trip here.
+export default function Home() {
+  redirect('/dashboard');
 }

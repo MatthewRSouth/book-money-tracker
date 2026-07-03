@@ -1,18 +1,17 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { getSession } from '@/lib/supabase/session';
 import { formatYen } from '@/lib/utils/formatYen';
 
 export default async function OverviewPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const session = await getSession();
 
   if (!session) {
     redirect('/login');
   }
+
+  const supabase = await createClient();
 
   const [groupsResult, studentsResult, booksResult, studentBooksResult] = await Promise.all([
     supabase.from('class_groups').select('id, name, sort_order').order('sort_order'),

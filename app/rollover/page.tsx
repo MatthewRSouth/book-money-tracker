@@ -1,14 +1,11 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { getSession } from '@/lib/supabase/session';
 import { getRolloverSummary } from '@/lib/actions/rollover';
 import RolloverClient from './RolloverClient';
 
 export default async function RolloverPage() {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const session = await getSession();
 
   if (!session) redirect('/login');
 

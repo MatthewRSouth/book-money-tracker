@@ -1,19 +1,19 @@
 import { cache } from 'react';
-import type { Session } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 
 /**
- * Reads the current auth session once per render pass.
+ * Returns the authenticated user, or null.
  *
- * `getSession()` decodes the session from the cookie locally (no network round
- * trip), but wrapping it in React's `cache()` dedupes repeated calls within a
- * single server render so pages that check auth alongside other data don't
- * re-run the work. Security enforcement lives in `proxy.ts` (middleware).
+ * Unlike `getSession()` (which only decodes the cookie locally), `getUser()`
+ * revalidates the token against the Supabase Auth server, so a tampered or
+ * revoked/expired session is rejected. Wrapped in React's `cache()` so the
+ * network check runs at most once per server render pass.
  */
-export const getSession = cache(async (): Promise<Session | null> => {
+export const getUser = cache(async (): Promise<User | null> => {
   const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session;
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
 });

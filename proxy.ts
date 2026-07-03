@@ -4,17 +4,19 @@ import { createMiddlewareClient } from '@/lib/supabase/middleware';
 export async function proxy(request: NextRequest) {
   const { supabase, response } = createMiddlewareClient(request);
 
+  // getUser() revalidates the token against the Supabase Auth server (rejecting
+  // tampered/revoked sessions) and refreshes the session cookie on the response.
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const isLoginPage = request.nextUrl.pathname === '/login';
 
-  if (!session && !isLoginPage) {
+  if (!user && !isLoginPage) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (session && isLoginPage) {
+  if (user && isLoginPage) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { getSession } from '@/lib/supabase/session';
+import { getUser } from '@/lib/supabase/session';
 import type { ClassGroup, Book, StudentRow, GroupData } from '@/types';
 import GlobalSearch from '@/components/GlobalSearch';
 import LogoutButton from '@/components/LogoutButton';
@@ -13,9 +13,9 @@ interface DashboardPageProps {
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
-  const session = await getSession();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     redirect('/login');
   }
 

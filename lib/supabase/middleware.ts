@@ -1,6 +1,12 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+// Inactivity timeout: the auth cookie is re-issued on every request (Supabase
+// refreshes the session here), so capping its max-age means an idle session
+// expires this long after the user's *last* request, forcing re-login. Active
+// users keep renewing it and stay signed in. Change this one value to tune it.
+const INACTIVITY_TIMEOUT_SECONDS = 2 * 60 * 60; // 2 hours
+
 export function createMiddlewareClient(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -15,9 +21,20 @@ export function createMiddlewareClient(request: NextRequest) {
         setAll(toSet) {
           toSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
-          toSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
+          toSet.forEach(({ name, value, options }) => {
+            // Only shorten real session cookies. Deletions (empty value) keep
+            // their original options so sign-out still clears the cookie.
+            const capped = value
+              ? {
+                  ...options,
+                  maxAge: Math.min(
+                    options?.maxAge ?? INACTIVITY_TIMEOUT_SECONDS,
+                    INACTIVITY_TIMEOUT_SECONDS
+                  ),
+                }
+              : options;
+            response.cookies.set(name, value, capped);
+          });
         },
       },
     }

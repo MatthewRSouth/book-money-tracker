@@ -1,13 +1,13 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { getSession } from '@/lib/supabase/session';
+import { getUser } from '@/lib/supabase/session';
 import { formatYen } from '@/lib/utils/formatYen';
 
 export default async function OverviewPage() {
-  const session = await getSession();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     redirect('/login');
   }
 

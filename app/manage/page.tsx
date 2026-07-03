@@ -1,14 +1,14 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { getSession } from '@/lib/supabase/session';
+import { getUser } from '@/lib/supabase/session';
 import type { ClassGroup } from '@/types';
 import ManageGroupsTable from '@/components/ManageGroupsTable';
 
 export default async function ManagePage() {
-  const session = await getSession();
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     redirect('/login');
   }
 

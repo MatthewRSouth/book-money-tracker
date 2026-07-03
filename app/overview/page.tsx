@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { getUser } from '@/lib/supabase/session';
@@ -11,6 +12,24 @@ export default async function OverviewPage() {
     redirect('/login');
   }
 
+  return (
+    <div className="min-h-screen p-4 sm:p-6 max-w-5xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-xl font-semibold text-foreground">Overview</h1>
+        <Link href="/dashboard" className="text-sm text-muted hover:text-primary transition-colors">
+          ← Dashboard
+        </Link>
+      </div>
+
+      {/* Data-dependent sections stream in; the header above flushes first. */}
+      <Suspense fallback={<OverviewSkeleton />}>
+        <OverviewData />
+      </Suspense>
+    </div>
+  );
+}
+
+async function OverviewData() {
   const supabase = await createClient();
 
   const [groupsResult, studentsResult, booksResult, studentBooksResult] = await Promise.all([
@@ -73,14 +92,7 @@ export default async function OverviewPage() {
   });
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-foreground">Overview</h1>
-        <Link href="/dashboard" className="text-sm text-muted hover:text-primary transition-colors">
-          ← Dashboard
-        </Link>
-      </div>
-
+    <>
       {/* Group summaries */}
       <section className="mb-8">
         <h2 className="text-xs font-medium text-muted uppercase tracking-wide mb-3">Groups</h2>
@@ -250,6 +262,32 @@ export default async function OverviewPage() {
           </div>
         )}
       </section>
+    </>
+  );
+}
+
+// Fallback for the data sections only (the header is rendered by the page).
+function OverviewSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <section className="mb-8">
+        <div className="h-3 w-16 rounded bg-card border border-border mb-3" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-24 rounded-xl bg-card border border-border" />
+          ))}
+        </div>
+      </section>
+      {Array.from({ length: 2 }).map((_, i) => (
+        <section key={i} className="mb-8">
+          <div className="h-3 w-40 rounded bg-card border border-border mb-3" />
+          <div className="rounded-xl bg-card border border-border overflow-hidden">
+            {Array.from({ length: 4 }).map((_, r) => (
+              <div key={r} className="h-11 border-b border-border last:border-b-0" />
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
